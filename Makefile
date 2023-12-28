@@ -184,7 +184,6 @@ $(BUILD_DIR)/%.bin: $(BUILD_DIR)/%.elf | $(BUILD_DIR)
 	$(BIN) $< $@	
 	
 $(BUILD_DIR): Makefile
-	mkdir -p $@
 	mkdir -p $(sort $(dir $(OBJECTS)))
 
 #######################################
