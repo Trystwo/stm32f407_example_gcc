@@ -18,11 +18,11 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "gpio.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "led.h"
-#include "usart.h"
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -80,15 +80,14 @@ int main(void)
   SystemClock_Config();
 
   /* USER CODE BEGIN SysInit */
-  led_init();
-  usart_init(115200);
+
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
-
+  MX_GPIO_Init();
   /* USER CODE BEGIN 2 */
-  HAL_GPIO_WritePin(GPIOF, GPIO_PIN_9, GPIO_PIN_SET);
-  HAL_GPIO_WritePin(GPIOF, GPIO_PIN_10, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(LED0_GPIO_Port, LED0_Pin, GPIO_PIN_SET);
+  HAL_GPIO_WritePin(LED1_GPIO_Port, LED1_Pin, GPIO_PIN_RESET);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -98,10 +97,8 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-    printf("Hello World!\r\n");
-    printf("%f\r\n", 3.1415926);
-    HAL_GPIO_TogglePin(GPIOF, GPIO_PIN_9);
-    HAL_GPIO_TogglePin(GPIOF, GPIO_PIN_10);
+    HAL_GPIO_TogglePin(GPIOF, LED0_Pin);
+    HAL_GPIO_TogglePin(GPIOF, LED1_Pin);
     HAL_Delay(1000);
   }
   /* USER CODE END 3 */
