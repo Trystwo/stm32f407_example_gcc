@@ -59,9 +59,6 @@ Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal.c \
 Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_exti.c \
 Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_uart.c \
 
-
-
-
 # ASM sources
 ASM_SOURCES =  \
 startup_stm32f407xx.s
@@ -122,11 +119,13 @@ AS_INCLUDES =
 C_INCLUDES =  \
 -ICore/Inc \
 -IDrivers/BSP/LED \
+-IDrivers/BSP/SRAM \
+-IDrivers/SYSTEM/usart \
 -IDrivers/STM32F4xx_HAL_Driver/Inc \
 -IDrivers/STM32F4xx_HAL_Driver/Inc/Legacy \
 -IDrivers/CMSIS/Device/ST/STM32F4xx/Include \
 -IDrivers/CMSIS/Include \
--IDrivers/SYSTEM/usart
+
 
 
 # compile gcc flags
