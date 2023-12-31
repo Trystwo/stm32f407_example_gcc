@@ -37,8 +37,11 @@ BUILD_DIR = build
 C_SOURCES =  \
 Core/Src/main.c \
 Core/Src/stm32f4xx_it.c \
+Core/Src/system_stm32f4xx.c \
 Core/Src/stm32f4xx_hal_msp.c \
 Drivers/BSP/LED/led.c \
+Drivers/SYSTEM/usart/usart.c \
+Drivers/BSP/SRAM/sram.c \
 Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_tim.c \
 Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_tim_ex.c \
 Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rcc.c \
@@ -55,8 +58,9 @@ Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_cortex.c \
 Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal.c \
 Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_exti.c \
 Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_uart.c \
-Core/Src/system_stm32f4xx.c \
-Drivers/SYSTEM/usart/usart.c \
+
+
+
 
 # ASM sources
 ASM_SOURCES =  \
