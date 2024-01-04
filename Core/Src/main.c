@@ -23,6 +23,7 @@
 /* USER CODE BEGIN Includes */
 #include "led.h"
 #include "usart.h"
+#include "sram.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -47,20 +48,24 @@
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
-void SystemClock_Config(void);
+//void SystemClock_Config(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-
+uint8_t sys_stm32_clock_init(uint32_t plln, uint32_t pllm, uint32_t pllp, uint32_t pllq);
 /* USER CODE END 0 */
 
 /**
   * @brief  The application entry point.
   * @retval int
   */
+//uint32_t g_test_buffer[250000] __attribute__((section(".bss.ARM.__at_0x6800000")));
+uint8_t str[14] = {0xff, 0xff, 0xff, 0xff,\
+                   0xff, 0xff, 0xff, 0xff, \
+                   0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
 int main(void)
 {
   /* USER CODE BEGIN 1 */
@@ -77,11 +82,13 @@ int main(void)
   /* USER CODE END Init */
 
   /* Configure the system clock */
-  SystemClock_Config();
+  //SystemClock_Config();
 
   /* USER CODE BEGIN SysInit */
-  led_init();
+  sys_stm32_clock_init(336, 8, 2, 7); /* 设置时钟,168Mhz */
+  //led_init();
   usart_init(115200);
+  sram_init();
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
@@ -89,6 +96,9 @@ int main(void)
   /* USER CODE BEGIN 2 */
   HAL_GPIO_WritePin(GPIOF, GPIO_PIN_9, GPIO_PIN_SET);
   HAL_GPIO_WritePin(GPIOF, GPIO_PIN_10, GPIO_PIN_RESET);
+
+  sram_write((uint8_t *)"Hello World!\r\n", 0x0000, 14);
+  //HAL_Delay(1000);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -98,10 +108,12 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-    printf("Hello World!\r\n");
-    printf("%f\r\n", 3.1415926);
-    HAL_GPIO_TogglePin(GPIOF, GPIO_PIN_9);
-    HAL_GPIO_TogglePin(GPIOF, GPIO_PIN_10);
+    //printf("%f\r\n", 3.1415926);
+    //printf("Hello World!\r\n");
+    //HAL_GPIO_TogglePin(GPIOF, GPIO_PIN_9);
+    //HAL_GPIO_TogglePin(GPIOF, GPIO_PIN_10);
+    sram_read(str, 0x0000, 14);
+    printf("%s", str);
     HAL_Delay(1000);
   }
   /* USER CODE END 3 */
@@ -111,45 +123,53 @@ int main(void)
   * @brief System Clock Configuration
   * @retval None
   */
-void SystemClock_Config(void)
+uint8_t sys_stm32_clock_init(uint32_t plln, uint32_t pllm, uint32_t pllp, uint32_t pllq)
 {
-  RCC_OscInitTypeDef RCC_OscInitStruct = {0};
-  RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
+  HAL_StatusTypeDef ret = HAL_OK;
+  RCC_OscInitTypeDef rcc_osc_init = {0};
+  RCC_ClkInitTypeDef rcc_clk_init = {0};
 
-  /** Configure the main internal regulator output voltage
-  */
-  __HAL_RCC_PWR_CLK_ENABLE();
-  __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
+  __HAL_RCC_PWR_CLK_ENABLE();                                         /* 使能PWR时钟 */
 
-  /** Initializes the RCC Oscillators according to the specified parameters
-  * in the RCC_OscInitTypeDef structure.
-  */
-  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE;
-  RCC_OscInitStruct.HSEState = RCC_HSE_ON;
-  RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
-  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
-  RCC_OscInitStruct.PLL.PLLM = 8;
-  RCC_OscInitStruct.PLL.PLLN = 336;
-  RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
-  RCC_OscInitStruct.PLL.PLLQ = 4;
-  if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
+  __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);      /* 设置调压器输出电压级别，以便在器件未以最大频率工作 */
+
+  /* 使能HSE，并选择HSE作为PLL时钟源，配置PLL1，开启USB时钟 */
+  rcc_osc_init.OscillatorType = RCC_OSCILLATORTYPE_HSE;        /* 时钟源为HSE */
+  rcc_osc_init.HSEState = RCC_HSE_ON;                          /* 打开HSE */
+  rcc_osc_init.PLL.PLLState = RCC_PLL_ON;                      /* 打开PLL */
+  rcc_osc_init.PLL.PLLSource = RCC_PLLSOURCE_HSE;              /* PLL时钟源选择HSE */
+  rcc_osc_init.PLL.PLLN = plln;
+  rcc_osc_init.PLL.PLLM = pllm;
+  rcc_osc_init.PLL.PLLP = pllp;
+  rcc_osc_init.PLL.PLLQ = pllq;
+  ret = HAL_RCC_OscConfig(&rcc_osc_init);                      /* 初始化RCC */
+  if(ret != HAL_OK)
   {
-    Error_Handler();
+    return 1;                                                /* 时钟初始化失败，可以在这里加入自己的处理 */
   }
 
-  /** Initializes the CPU, AHB and APB buses clocks
-  */
-  RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
-                              |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
-  RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
-  RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
-  RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV4;
-  RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV2;
+  /* 选中PLL作为系统时钟源并且配置HCLK,PCLK1和PCLK2 */
+  rcc_clk_init.ClockType = ( RCC_CLOCKTYPE_SYSCLK \
+                                | RCC_CLOCKTYPE_HCLK \
+                                | RCC_CLOCKTYPE_PCLK1 \
+                                | RCC_CLOCKTYPE_PCLK2);
 
-  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_5) != HAL_OK)
+  rcc_clk_init.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;         /* 设置系统时钟时钟源为PLL */
+  rcc_clk_init.AHBCLKDivider = RCC_SYSCLK_DIV1;                /* AHB分频系数为1 */
+  rcc_clk_init.APB1CLKDivider = RCC_HCLK_DIV4;                 /* APB1分频系数为4 */
+  rcc_clk_init.APB2CLKDivider = RCC_HCLK_DIV2;                 /* APB2分频系数为2 */
+  ret = HAL_RCC_ClockConfig(&rcc_clk_init, FLASH_LATENCY_5);   /* 同时设置FLASH延时周期为5WS，也就是6个CPU周期 */
+  if(ret != HAL_OK)
   {
-    Error_Handler();
+    return 1;                                                /* 时钟初始化失败 */
   }
+
+  /* STM32F405x/407x/415x/417x Z版本的器件支持预取功能 */
+  if (HAL_GetREVID() == 0x1001)
+  {
+    __HAL_FLASH_PREFETCH_BUFFER_ENABLE();                    /* 使能flash预取 */
+  }
+  return 0;
 }
 
 /* USER CODE BEGIN 4 */
