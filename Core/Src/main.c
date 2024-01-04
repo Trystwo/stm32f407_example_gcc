@@ -62,10 +62,7 @@ uint8_t sys_stm32_clock_init(uint32_t plln, uint32_t pllm, uint32_t pllp, uint32
   * @brief  The application entry point.
   * @retval int
   */
-//uint32_t g_test_buffer[250000] __attribute__((section(".bss.ARM.__at_0x6800000")));
-uint8_t str[14] = {0xff, 0xff, 0xff, 0xff,\
-                   0xff, 0xff, 0xff, 0xff, \
-                   0xff, 0xff, 0xff, 0xff, 0xff, 0xff};
+uint8_t str[14] __attribute__((section(".my_section")));
 int main(void)
 {
   /* USER CODE BEGIN 1 */
@@ -86,7 +83,7 @@ int main(void)
 
   /* USER CODE BEGIN SysInit */
   sys_stm32_clock_init(336, 8, 2, 7); /* 设置时钟,168Mhz */
-  //led_init();
+  led_init();
   usart_init(115200);
   sram_init();
   /* USER CODE END SysInit */
@@ -96,9 +93,7 @@ int main(void)
   /* USER CODE BEGIN 2 */
   HAL_GPIO_WritePin(GPIOF, GPIO_PIN_9, GPIO_PIN_SET);
   HAL_GPIO_WritePin(GPIOF, GPIO_PIN_10, GPIO_PIN_RESET);
-
-  sram_write((uint8_t *)"Hello World!\r\n", 0x0000, 14);
-  //HAL_Delay(1000);
+  sram_write((uint8_t *)"Hello World!\r\n", 0x0000, 15);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -108,12 +103,11 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-    //printf("%f\r\n", 3.1415926);
-    //printf("Hello World!\r\n");
-    //HAL_GPIO_TogglePin(GPIOF, GPIO_PIN_9);
-    //HAL_GPIO_TogglePin(GPIOF, GPIO_PIN_10);
-    sram_read(str, 0x0000, 14);
+    HAL_GPIO_TogglePin(GPIOF, GPIO_PIN_9);
+    HAL_GPIO_TogglePin(GPIOF, GPIO_PIN_10);
+    //sram_read(str, 0x0000, 14);
     printf("%s", str);
+    printf("0x%lx\n", (uint32_t)&str);
     HAL_Delay(1000);
   }
   /* USER CODE END 3 */

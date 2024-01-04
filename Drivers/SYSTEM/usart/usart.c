@@ -10,7 +10,7 @@
  */
 #include "main.h"
 #include "usart.h"
-
+#if 0
 __asm(".global __use_no_semihosting\n\t");          /* 声明不使用半主机模式 */
 __asm(".global __ARM_use_no_argv \n\t");            /* AC6下需要声明main函数为无参数格式，否则部分例程可能出现半主机模式 */
 
@@ -42,6 +42,7 @@ char *_sys_command_string(char *cmd, int len)
 
 /* FILE 在 stdio.h里面定义. */
 FILE __stdout;
+#endif
 /*arm-none-eabi-gcc编译器 printf重定向到串口1*/
 int __io_putchar(int ch)
 {
