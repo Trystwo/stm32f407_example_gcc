@@ -111,7 +111,7 @@ SECTIONS
     __exidx_end = .;
   } >FLASH
 
-  .preinit_array     :
+  .preinit_array :
   {
     PROVIDE_HIDDEN (__preinit_array_start = .);
     KEEP (*(.preinit_array*))
@@ -204,12 +204,10 @@ SECTIONS
 
   .ARM.attributes 0 : { *(.ARM.attributes) }
 
-  .my_section :
+  .sram_data (NOLOAD) : /*不加载到FLASH*/
   {
-    . = ALIGN(4);
-    *(.my_section)           /* .data sections */
-    *(.my_section*)          /* .my_section .my_section1 .my_section2都放到这个位置 */
-    . = ALIGN(4);
+    *(.sram_data)       /* .sram_data段 */
+    *(.sram_data*)     /* .sram_data* 段 */
   } >SRAM
 }
 

@@ -22,7 +22,7 @@ TARGET = stm32f407xx
 # debug build?
 DEBUG = 1
 # optimization
-OPT = -O0
+OPT = -Og
 
 #######################################
 # paths
@@ -40,8 +40,10 @@ Core/Src/stm32f4xx_it.c \
 Core/Src/system_stm32f4xx.c \
 Core/Src/stm32f4xx_hal_msp.c \
 Drivers/BSP/LED/led.c \
-Drivers/SYSTEM/usart/usart.c \
 Drivers/BSP/SRAM/sram.c \
+Drivers/BSP/LCD/lcd.c \
+Drivers/SYSTEM/usart/usart.c \
+Drivers/SYSTEM/delay/delay.c \
 Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_tim.c \
 Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_tim_ex.c \
 Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rcc.c \
@@ -122,7 +124,9 @@ C_INCLUDES =  \
 -ICore/Inc \
 -IDrivers/BSP/LED \
 -IDrivers/BSP/SRAM \
+-IDrivers/BSP/LCD \
 -IDrivers/SYSTEM/usart \
+-IDrivers/SYSTEM/delay \
 -IDrivers/STM32F4xx_HAL_Driver/Inc \
 -IDrivers/STM32F4xx_HAL_Driver/Inc/Legacy \
 -IDrivers/CMSIS/Device/ST/STM32F4xx/Include \

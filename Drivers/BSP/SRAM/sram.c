@@ -23,14 +23,6 @@ void sram_init(void)
     __HAL_RCC_GPIOF_CLK_ENABLE(); /* 使能GPIOF时钟 */
     __HAL_RCC_GPIOG_CLK_ENABLE(); /* 使能GPIOG时钟 */
 
-    HAL_GPIO_Init(SRAM_CS_GPIO_PORT, &gpio_init_struct); /* SRAM_CS引脚模式设置 */
-
-    gpio_init_struct.Pin = SRAM_WR_GPIO_PIN;
-    HAL_GPIO_Init(SRAM_WR_GPIO_PORT, &gpio_init_struct); /* SRAM_WR引脚模式设置 */
-
-    gpio_init_struct.Pin = SRAM_RD_GPIO_PIN;
-    HAL_GPIO_Init(SRAM_RD_GPIO_PORT, &gpio_init_struct); /* SRAM_CS引脚模式设置 */
-
     /* PD0,1,4,5,8~15 */
     gpio_init_struct.Pin = GPIO_PIN_0 | GPIO_PIN_1 | GPIO_PIN_4| GPIO_PIN_5 | 
 						GPIO_PIN_8 | GPIO_PIN_9 | GPIO_PIN_10 | GPIO_PIN_11 | 
@@ -76,7 +68,7 @@ void sram_init(void)
     g_sram_handler.Init.WriteBurst = FSMC_WRITE_BURST_DISABLE;              /* 禁止突发写 */
 	g_sram_handler.Init.ContinuousClock = FSMC_CONTINUOUS_CLOCK_SYNC_ONLY;  /* 仅同步模式下有用 */
     /* FSMC读时序控制寄存器 */
-    fsmc_readwritetim.AddressSetupTime = 0x00;                              /* 地址建立时间（ADDSET）为2个HCLK 1/168M=6ns*2=12ns */
+    fsmc_readwritetim.AddressSetupTime = 0x02;                              /* 地址建立时间（ADDSET）为2个HCLK 1/168M=6ns*2=12ns */
     fsmc_readwritetim.AddressHoldTime = 0x00;                               /* 地址保持时间（ADDHLD）模式A未用到 */
     fsmc_readwritetim.DataSetupTime = 0x08;                                 /* 数据保存时间为8个HCLK =6*8= 48ns */
     fsmc_readwritetim.BusTurnAroundDuration = 0x00;

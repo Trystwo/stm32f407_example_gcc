@@ -24,6 +24,8 @@
 #include "led.h"
 #include "usart.h"
 #include "sram.h"
+#include "lcd.h"
+#include "delay.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -55,6 +57,7 @@
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+
 uint8_t sys_stm32_clock_init(uint32_t plln, uint32_t pllm, uint32_t pllp, uint32_t pllq);
 /* USER CODE END 0 */
 
@@ -62,7 +65,9 @@ uint8_t sys_stm32_clock_init(uint32_t plln, uint32_t pllm, uint32_t pllp, uint32
   * @brief  The application entry point.
   * @retval int
   */
-uint8_t str[14] __attribute__((section(".my_section")));
+
+uint8_t str[250000] __attribute__((section(".sram_data" )));
+
 int main(void)
 {
   /* USER CODE BEGIN 1 */
@@ -83,8 +88,10 @@ int main(void)
 
   /* USER CODE BEGIN SysInit */
   sys_stm32_clock_init(336, 8, 2, 7); /* 设置时钟,168Mhz */
+  delay_init(168);                    /* 初始化延时函数 */
   led_init();
   usart_init(115200);
+  lcd_init();
   sram_init();
   /* USER CODE END SysInit */
 
@@ -108,7 +115,7 @@ int main(void)
     //sram_read(str, 0x0000, 14);
     printf("%s", str);
     printf("0x%lx\n", (uint32_t)&str);
-    HAL_Delay(1000);
+    delay_ms(1000);
   }
   /* USER CODE END 3 */
 }
