@@ -115,6 +115,7 @@ int main(void)
     //sram_read(str, 0x0000, 14);
     printf("%s", str);
     printf("0x%lx\n", (uint32_t)&str);
+    printf("%.7f\n", 3.1415926);
     delay_ms(1000);
   }
   /* USER CODE END 3 */
