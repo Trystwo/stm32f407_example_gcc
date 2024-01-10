@@ -62,7 +62,7 @@ uint8_t sys_stm32_clock_init(uint32_t plln, uint32_t pllm, uint32_t pllp, uint32
   * @brief  The application entry point.
   * @retval int
   */
-uint8_t str[14] __attribute__((section(".my_section")));
+uint8_t str[14] __attribute__((section(".my_section.str")));
 int main(void)
 {
   /* USER CODE BEGIN 1 */

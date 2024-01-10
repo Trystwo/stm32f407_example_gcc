@@ -63,8 +63,8 @@ MEMORY
 {
 RAM (xrw)      : ORIGIN = 0x20000000, LENGTH = 128K
 CCMRAM (xrw)      : ORIGIN = 0x10000000, LENGTH = 64K
-FLASH (rx)      : ORIGIN = 0x8000000, LENGTH = 1024K
 SRAM (xrw)      : ORIGIN = 0x68000000, LENGTH = 1024K
+FLASH (rx)      : ORIGIN = 0x8000000, LENGTH = 1024K
 }
 
 /* Define output sections */
@@ -193,7 +193,7 @@ SECTIONS
     . = . + _Min_Stack_Size;
     . = ALIGN(8);
   } >RAM
-
+  
   /* Remove information from the standard libraries */
   /DISCARD/ :
   {
@@ -203,14 +203,15 @@ SECTIONS
   }
 
   .ARM.attributes 0 : { *(.ARM.attributes) }
+}
 
+SECTIONS
+{
   .my_section :
   {
     . = ALIGN(4);
     *(.my_section)           /* .data sections */
     *(.my_section*)          /* .my_section .my_section1 .my_section2都放到这个位置 */
     . = ALIGN(4);
-  } >SRAM
+  } >SRAM AT> FLASH
 }
-
-
