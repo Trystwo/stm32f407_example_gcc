@@ -21,11 +21,16 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "sys.h"
 #include "led.h"
 #include "usart.h"
 #include "sram.h"
 #include "lcd.h"
 #include "delay.h"
+#include "key.h"
+#include "malloc.h"
+#include "lvgl_demo.h"
+#include "touch.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -66,8 +71,8 @@ uint8_t sys_stm32_clock_init(uint32_t plln, uint32_t pllm, uint32_t pllp, uint32
   * @retval int
   */
 
-uint8_t str[250000] __attribute__((section(".sram_data" )));
-
+//uint8_t str[250000] __attribute__((section(".sram_data" )));
+uint8_t str[16];
 int main(void)
 {
   /* USER CODE BEGIN 1 */
@@ -92,15 +97,18 @@ int main(void)
   led_init();
   usart_init(115200);
   lcd_init();
+  key_init();
   sram_init();
+  tp_dev.init();
+  my_mem_init(SRAMIN);                /* 初始化内部内存池 */
+  my_mem_init(SRAMEX);                /* 初始化外部内存池 */
+  
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
 
   /* USER CODE BEGIN 2 */
-  HAL_GPIO_WritePin(GPIOF, GPIO_PIN_9, GPIO_PIN_SET);
-  HAL_GPIO_WritePin(GPIOF, GPIO_PIN_10, GPIO_PIN_RESET);
-  sram_write((uint8_t *)"Hello World!\r\n", 0x0000, 15);
+  //lvgl_demo();                        /* 运行FreeRTOS例程 */
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -110,13 +118,7 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-    HAL_GPIO_TogglePin(GPIOF, GPIO_PIN_9);
-    HAL_GPIO_TogglePin(GPIOF, GPIO_PIN_10);
-    //sram_read(str, 0x0000, 14);
-    printf("%s", str);
-    printf("0x%lx\n", (uint32_t)&str);
-    printf("%.7f\n", 3.1415926);
-    delay_ms(1000);
+
   }
   /* USER CODE END 3 */
 }

@@ -60,7 +60,7 @@ void Error_Handler(void);
 /* Private defines -----------------------------------------------------------*/
 
 /* USER CODE BEGIN Private defines */
-
+#define SYS_SUPPORT_OS         1
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus

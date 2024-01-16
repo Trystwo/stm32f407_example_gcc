@@ -42,6 +42,7 @@ Core/Src/stm32f4xx_hal_msp.c \
 Drivers/BSP/LED/led.c \
 Drivers/BSP/SRAM/sram.c \
 Drivers/BSP/LCD/lcd.c \
+Drivers/SYSTEM/sys/sys.c \
 Drivers/SYSTEM/usart/usart.c \
 Drivers/SYSTEM/delay/delay.c \
 Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_tim.c \
@@ -125,6 +126,7 @@ C_INCLUDES =  \
 -IDrivers/BSP/LED \
 -IDrivers/BSP/SRAM \
 -IDrivers/BSP/LCD \
+-IDrivers/SYSTEM/sys \
 -IDrivers/SYSTEM/usart \
 -IDrivers/SYSTEM/delay \
 -IDrivers/STM32F4xx_HAL_Driver/Inc \

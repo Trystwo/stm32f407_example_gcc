@@ -8,7 +8,7 @@
  * @copyright Copyright (c) 2023
  * 
  */
-#include "main.h"
+#include "sys.h"
 #include "usart.h"
 #if 0
 __asm(".global __use_no_semihosting\n\t");          /* 声明不使用半主机模式 */
@@ -185,15 +185,15 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
  */
 void USART_UX_IRQHandler(void)
 { 
-#if SYS_SUPPORT_OS                              /* 使用OS */
-    OSIntEnter();    
-#endif
+//#if SYS_SUPPORT_OS                              /* 使用OS */
+//    OSIntEnter();    
+//#endif
 
     HAL_UART_IRQHandler(&g_uart1_handle);       /* 调用HAL库中断处理公用函数 */
 
-#if SYS_SUPPORT_OS                              /* 使用OS */
-    OSIntExit();
-#endif
+//#if SYS_SUPPORT_OS                              /* 使用OS */
+//    OSIntExit();
+//#endif
 }
 
 #endif
