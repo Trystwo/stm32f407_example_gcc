@@ -34,35 +34,10 @@ BUILD_DIR = build
 # source
 ######################################
 # C sources
-C_SOURCES =  \
-Core/Src/main.c \
-Core/Src/stm32f4xx_it.c \
-Core/Src/system_stm32f4xx.c \
-Core/Src/stm32f4xx_hal_msp.c \
-Drivers/BSP/LED/led.c \
-Drivers/BSP/SRAM/sram.c \
-Drivers/BSP/LCD/lcd.c \
-Drivers/SYSTEM/sys/sys.c \
-Drivers/SYSTEM/usart/usart.c \
-Drivers/SYSTEM/delay/delay.c \
-Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_tim.c \
-Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_tim_ex.c \
-Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rcc.c \
-Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rcc_ex.c \
-Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash.c \
-Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash_ex.c \
-Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash_ramfunc.c \
-Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_gpio.c \
-Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_dma_ex.c \
-Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_dma.c \
-Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_pwr.c \
-Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_pwr_ex.c \
-Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_cortex.c \
-Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal.c \
-Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_exti.c \
-Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_uart.c \
-Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_sram.c \
-Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_ll_fsmc.c 
+SOURCES = ./
+
+SOURCES_DIRS := $(shell find $(SOURCES) -type d)
+C_SOURCES=$(foreach dir, $(SOURCES_DIRS), $(wildcard $(dir)/*.c))
 
 # ASM sources
 ASM_SOURCES =  \
@@ -121,20 +96,31 @@ C_DEFS =  \
 AS_INCLUDES = 
 
 # C includes
-C_INCLUDES =  \
--ICore/Inc \
--IDrivers/BSP/LED \
--IDrivers/BSP/SRAM \
--IDrivers/BSP/LCD \
--IDrivers/SYSTEM/sys \
--IDrivers/SYSTEM/usart \
--IDrivers/SYSTEM/delay \
--IDrivers/STM32F4xx_HAL_Driver/Inc \
--IDrivers/STM32F4xx_HAL_Driver/Inc/Legacy \
--IDrivers/CMSIS/Device/ST/STM32F4xx/Include \
--IDrivers/CMSIS/Include \
+INCLUDES =  \
+Core/Inc \
+Drivers/BSP/LED \
+Drivers/BSP/SRAM \
+Drivers/BSP/LCD \
+Drivers/SYSTEM/sys \
+Drivers/SYSTEM/usart \
+Drivers/SYSTEM/delay \
+Drivers/STM32F4xx_HAL_Driver/Inc \
+Drivers/STM32F4xx_HAL_Driver/Inc/Legacy \
+Drivers/CMSIS/Device/ST/STM32F4xx/Include \
+Drivers/CMSIS/Include \
+Drivers/BSP/24CXX \
+Drivers/BSP/IIC \
+Drivers/BSP/KEY \
+Drivers/BSP/TIMER \
+Drivers/BSP/TOUCH \
+Middlewares/LVGL/GUI/lvgl \
+Middlewares/FreeRTOS/include \
+Middlewares/MALLOC \
+Middlewares/FreeRTOS/portable/GCC/ARM_CM4F \
+Middlewares/LVGL/GUI/lvgl/examples/porting \
+Middlewares/LVGL/GUI_APP/demos/stress
 
-
+C_INCLUDES=$(patsubst %,-I%, $(INCLUDES))
 
 # compile gcc flags
 ASFLAGS = $(MCU) $(AS_DEFS) $(AS_INCLUDES) $(OPT) -Wall -fdata-sections -ffunction-sections
@@ -162,7 +148,6 @@ LDFLAGS = $(MCU) -specs=nano.specs -u _printf_float -T$(LDSCRIPT) $(LIBDIR) $(LI
 
 # default action: build all
 all: $(BUILD_DIR)/$(TARGET).elf $(BUILD_DIR)/$(TARGET).hex $(BUILD_DIR)/$(TARGET).bin
-
 
 #######################################
 # build the application

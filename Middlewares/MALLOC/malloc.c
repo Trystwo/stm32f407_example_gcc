@@ -26,15 +26,14 @@
 
 #if 1 /*  GCC编译器  */
 /* 内存池(64字节对齐) */
-static uint8_t mem1base[MEM1_MAX_SIZE] __attribute__((aligned(64)));        /* 内部SRAM内存池 */
-static uint8_t mem2base[MEM2_MAX_SIZE] __attribute__((section(".ccmram"), aligned(64)));     /* 内部CCM内存池 */
-static uint8_t mem3base[MEM3_MAX_SIZE] __attribute__((section(".sram_data"), aligned(64)));     /* 外部SRAM内存池 */
+static uint8_t mem1base[MEM1_MAX_SIZE] __attribute__((aligned(32)));        /* 内部SRAM内存池 */
+static uint8_t mem2base[MEM2_MAX_SIZE] __attribute__((section(".ccmram"), aligned(32)));     /* 内部CCM内存池 */
+static uint8_t mem3base[MEM3_MAX_SIZE] __attribute__((section(".sram_data"), aligned(32)));     /* 外部SRAM内存池 */
 
 /* 内存管理表 */
-static MT_TYPE mem1mapbase[MEM1_ALLOC_TABLE_SIZE];                                                  /* 内部SRAM内存池MAP */
-static MT_TYPE mem2mapbase[MEM2_ALLOC_TABLE_SIZE] __attribute__((section(".ccmrammapbase"), aligned(64)));  /* 内部CCM内存池MAP */
-static MT_TYPE mem3mapbase[MEM3_ALLOC_TABLE_SIZE] __attribute__((section(".srammapbase"), aligned(64)));  /* 外部SRAM内存池MAP */
-
+static MT_TYPE mem1mapbase[MEM1_ALLOC_TABLE_SIZE] __attribute__((aligned(32)));                                                  /* 内部SRAM内存池MAP */
+static MT_TYPE mem2mapbase[MEM2_ALLOC_TABLE_SIZE] __attribute__((section(".ccmram"), aligned(32)));  /* 内部CCM内存池MAP */
+static MT_TYPE mem3mapbase[MEM3_ALLOC_TABLE_SIZE] __attribute__((section(".sram_data"), aligned(32)));  /* 外部SRAM内存池MAP */
 #else
 #if!(__ARMCC_VERSION >= 6010050)   /* 不是AC6编译器，即使用AC5编译器时 */
 /* 内存池(64字节对齐) */
@@ -49,7 +48,7 @@ static MT_TYPE mem3mapbase[MEM3_ALLOC_TABLE_SIZE] __attribute__((at(0x68000000 +
 #else      /* 使用AC6编译器时 */
 /* 内存池(64字节对齐) */
 static __ALIGNED(64) uint8_t mem1base[MEM1_MAX_SIZE];                                                           /* 内部SRAM内存池 */
-static __ALIGNED(64) uint8_t mem2base[MEM2_MAX_SIZE] __attribute__((section(".bss.ARM.__at_0x10000000")));      /* 内部CCM内存池 */
+static __ALIGNED(64) uint8_t mem2base[MEM2_MAX _SIZE] __attribute__((section(".bss.ARM.__at_0x10000000")));      /* 内部CCM内存池 */
 static __ALIGNED(64) uint8_t mem3base[MEM3_MAX_SIZE] __attribute__((section(".bss.ARM.__at_0x68000000")));      /* 外部SRAM内存池 */ 
 
 /* 内存管理表 */
@@ -280,5 +279,38 @@ void *myrealloc(uint8_t memx, void *ptr, uint32_t size)
         return (void *)((uint32_t)mallco_dev.membase[memx] + offset);   /* 返回新内存首地址 */
     }
 }
+/***************************************************************************************/
+/*适配lvgl内存管理*/
+/**
+ * @brief       分配内存(外部调用)
+ * @param       size : 要分配的内存大小(字节)
+ * @retval      分配到的内存首地址.
+ */
+void *lv_mymalloc(uint32_t size)
+{
+    return (void *)mymalloc(SRAMIN, size);
+}
 
+/**
+ * @brief       释放内存(内部调用)
+ * @param       offset : 内存地址偏移
+ * @retval      释放结果
+ *   @arg       0, 释放成功;
+ *   @arg       1, 释放失败;
+ *   @arg       2, 超区域了(失败);
+ */
+void lv_myfree(void *ptr)
+{
+    myfree(SRAMIN, ptr);
+}
 
+/**
+ * @brief       重新分配内存(外部调用)
+ * @param       *ptr : 旧内存首地址
+ * @param       size : 要分配的内存大小(字节)
+ * @retval      新分配到的内存首地址.
+ */
+void *lv_myrealloc(void *ptr, uint32_t size)
+{
+    return (void *)myrealloc(SRAMIN, ptr, size);
+}

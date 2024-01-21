@@ -71,8 +71,8 @@ uint8_t sys_stm32_clock_init(uint32_t plln, uint32_t pllm, uint32_t pllp, uint32
   * @retval int
   */
 
-//uint8_t str[250000] __attribute__((section(".sram_data" )));
-uint8_t str[16];
+uint8_t str[1] __attribute__((section(".sram_data" )));
+
 int main(void)
 {
   /* USER CODE BEGIN 1 */
@@ -96,7 +96,6 @@ int main(void)
   delay_init(168);                    /* 初始化延时函数 */
   led_init();
   usart_init(115200);
-  lcd_init();
   key_init();
   sram_init();
   tp_dev.init();
@@ -108,7 +107,8 @@ int main(void)
   /* Initialize all configured peripherals */
 
   /* USER CODE BEGIN 2 */
-  //lvgl_demo();                        /* 运行FreeRTOS例程 */
+  str[0] = 0x55;
+  lvgl_demo();                        /* 运行FreeRTOS例程 */
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -116,7 +116,7 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-
+    
     /* USER CODE BEGIN 3 */
 
   }

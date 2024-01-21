@@ -516,82 +516,48 @@ uint8_t tp_init(void)
     tp_dev.touchtype = 0;                   /* 默认设置(电阻屏 & 竖屏) */
     tp_dev.touchtype |= lcddev.dir & 0X01;  /* 根据LCD判定是横屏还是竖屏 */
 
-    if (lcddev.id == 0x7796)    /* 3.5寸屏有两种，一种屏幕ID为0x5510带电阻触摸屏，一种屏幕ID为0x7796带GT型号的电容触摸屏 */
+    T_PEN_GPIO_CLK_ENABLE();    /* T_PEN脚时钟使能 */
+    T_CS_GPIO_CLK_ENABLE();     /* T_CS脚时钟使能 */
+    T_MISO_GPIO_CLK_ENABLE();   /* T_MISO脚时钟使能 */
+    T_MOSI_GPIO_CLK_ENABLE();   /* T_MOSI脚时钟使能 */
+    T_CLK_GPIO_CLK_ENABLE();    /* T_CLK脚时钟使能 */
+
+    gpio_init_struct.Pin = T_PEN_GPIO_PIN;
+    gpio_init_struct.Mode = GPIO_MODE_INPUT;                 /* 输入 */
+    gpio_init_struct.Pull = GPIO_PULLUP;                     /* 上拉 */
+    gpio_init_struct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;      /* 高速 */
+    HAL_GPIO_Init(T_PEN_GPIO_PORT, &gpio_init_struct);       /* 初始化T_PEN引脚 */
+
+    gpio_init_struct.Pin = T_MISO_GPIO_PIN;
+    HAL_GPIO_Init(T_MISO_GPIO_PORT, &gpio_init_struct);      /* 初始化T_MISO引脚 */
+
+    gpio_init_struct.Pin = T_MOSI_GPIO_PIN;
+    gpio_init_struct.Mode = GPIO_MODE_OUTPUT_PP;             /* 推挽输出 */
+    gpio_init_struct.Pull = GPIO_PULLUP;                     /* 上拉 */
+    gpio_init_struct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;      /* 高速 */
+    HAL_GPIO_Init(T_MOSI_GPIO_PORT, &gpio_init_struct);      /* 初始化T_MOSI引脚 */
+
+    gpio_init_struct.Pin = T_CLK_GPIO_PIN;
+    HAL_GPIO_Init(T_CLK_GPIO_PORT, &gpio_init_struct);       /* 初始化T_CLK引脚 */
+
+    gpio_init_struct.Pin = T_CS_GPIO_PIN;
+    HAL_GPIO_Init(T_CS_GPIO_PORT, &gpio_init_struct);        /* 初始化T_CS引脚 */
+
+    tp_read_xy(&tp_dev.x[0], &tp_dev.y[0]); /* 第一次读取初始化 */
+    at24cxx_init();         /* 初始化24CXX */
+
+    if (tp_get_adjust_data())
     {
-        if (gt9xxx_init() == 0) /* 初始化GT系列触摸屏成功,即当前3.5寸屏为电容触摸屏 */
-        {
-            tp_dev.scan = gt9xxx_scan;  /* 扫描函数指向GT9147触摸屏扫描 */
-            tp_dev.touchtype |= 0X80;   /* 电容屏 */
-            return 0;
-        }
+        return 0;           /* 已经校准 */
+    }
+    else                    /* 未校准? */
+    {
+        lcd_clear(WHITE);   /* 清屏 */
+        tp_adjust();        /* 屏幕校准 */
+        tp_save_adjust_data();
     }
 
-    if (lcddev.id == 0X5510 || lcddev.id == 0X9806 || lcddev.id == 0X4342 || lcddev.id == 0X4384 || lcddev.id == 0X1018)  /* 电容触摸屏,4.3寸/10.1寸屏 */
-    {
-        gt9xxx_init();
-        tp_dev.scan = gt9xxx_scan;  /* 扫描函数指向GT9147触摸屏扫描 */
-        tp_dev.touchtype |= 0X80;   /* 电容屏 */
-        return 0;
-    }
-    else if (lcddev.id == 0X1963 || lcddev.id == 0X7084 || lcddev.id == 0X7016)     /* SSD1963 7寸屏或者 7寸800*480/1024*600 RGB屏 */
-    {
-        if (!ft5206_init())             /* 触摸IC是FT系列的就执行ft5206_init函数以及使用ft5206_scan扫描函数 */
-        {
-            tp_dev.scan = ft5206_scan;  /* 扫描函数指向FT5206触摸屏扫描 */
-        }
-        else                            /* 触摸IC是GT系列的就执行gt9xxx_init函数以及使用gt9xxx_scan扫描函数 */
-        {
-            gt9xxx_init();
-            tp_dev.scan = gt9xxx_scan;  /* 扫描函数指向GT9147触摸屏扫描 */
-        }
-        tp_dev.touchtype |= 0X80;       /* 电容屏 */
-        return 0;
-    }
-    else
-    {
-        T_PEN_GPIO_CLK_ENABLE();    /* T_PEN脚时钟使能 */
-        T_CS_GPIO_CLK_ENABLE();     /* T_CS脚时钟使能 */
-        T_MISO_GPIO_CLK_ENABLE();   /* T_MISO脚时钟使能 */
-        T_MOSI_GPIO_CLK_ENABLE();   /* T_MOSI脚时钟使能 */
-        T_CLK_GPIO_CLK_ENABLE();    /* T_CLK脚时钟使能 */
-
-        gpio_init_struct.Pin = T_PEN_GPIO_PIN;
-        gpio_init_struct.Mode = GPIO_MODE_INPUT;                 /* 输入 */
-        gpio_init_struct.Pull = GPIO_PULLUP;                     /* 上拉 */
-        gpio_init_struct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;      /* 高速 */
-        HAL_GPIO_Init(T_PEN_GPIO_PORT, &gpio_init_struct);       /* 初始化T_PEN引脚 */
-
-        gpio_init_struct.Pin = T_MISO_GPIO_PIN;
-        HAL_GPIO_Init(T_MISO_GPIO_PORT, &gpio_init_struct);      /* 初始化T_MISO引脚 */
-
-        gpio_init_struct.Pin = T_MOSI_GPIO_PIN;
-        gpio_init_struct.Mode = GPIO_MODE_OUTPUT_PP;             /* 推挽输出 */
-        gpio_init_struct.Pull = GPIO_PULLUP;                     /* 上拉 */
-        gpio_init_struct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;      /* 高速 */
-        HAL_GPIO_Init(T_MOSI_GPIO_PORT, &gpio_init_struct);      /* 初始化T_MOSI引脚 */
-
-        gpio_init_struct.Pin = T_CLK_GPIO_PIN;
-        HAL_GPIO_Init(T_CLK_GPIO_PORT, &gpio_init_struct);       /* 初始化T_CLK引脚 */
-
-        gpio_init_struct.Pin = T_CS_GPIO_PIN;
-        HAL_GPIO_Init(T_CS_GPIO_PORT, &gpio_init_struct);        /* 初始化T_CS引脚 */
-
-        tp_read_xy(&tp_dev.x[0], &tp_dev.y[0]); /* 第一次读取初始化 */
-        at24cxx_init();         /* 初始化24CXX */
-
-        if (tp_get_adjust_data())
-        {
-            return 0;           /* 已经校准 */
-        }
-        else                    /* 未校准? */
-        {
-            lcd_clear(WHITE);   /* 清屏 */
-            tp_adjust();        /* 屏幕校准 */
-            tp_save_adjust_data();
-        }
-
-        tp_get_adjust_data();
-    }
+    tp_get_adjust_data();
 
     return 1;
 }

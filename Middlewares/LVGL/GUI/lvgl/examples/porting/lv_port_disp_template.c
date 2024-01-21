@@ -115,7 +115,7 @@ void lv_port_disp_init(void)
     static lv_color_t buf_1 = mymalloc(SRAMEX, MY_DISP_HOR_RES * MY_DISP_VER_RES);              /* 设置缓冲区的大小为屏幕的全尺寸大小 */
     lv_disp_draw_buf_init(&draw_buf_dsc_1, buf_1, NULL, MY_DISP_HOR_RES * MY_DISP_VER_RES);     /* 初始化显示缓冲区 */
 #else
-    static lv_color_t buf_1[MY_DISP_HOR_RES * 10];                                              /* 设置缓冲区的大小为 10 行屏幕的大小 */
+    static lv_color_t buf_1[MY_DISP_HOR_RES * 240] __attribute__((section(".sram_data")));                                              /* 设置缓冲区的大小为 10 行屏幕的大小 */
     lv_disp_draw_buf_init(&draw_buf_dsc_1, buf_1, NULL, MY_DISP_HOR_RES * 10);                  /* 初始化显示缓冲区 */
 #endif
 

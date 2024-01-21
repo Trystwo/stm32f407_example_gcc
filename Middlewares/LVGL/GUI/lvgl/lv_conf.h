@@ -62,15 +62,15 @@
     #define LV_MEM_ADR                      0     /*0: 未使用*/
     /* 给内存分配器而不是地址，它将被调用来获得LVGL的内存池。例如my_malloc */
     #if LV_MEM_ADR == 0
-        //#define LV_MEM_POOL_INCLUDE your_alloc_library  /* 如果使用外部分配器，取消注释 */
-        //#define LV_MEM_POOL_ALLOC   your_alloc          /* 如果使用外部分配器，取消注释 */
+        #define LV_MEM_POOL_INCLUDE "malloc.h"  /* 如果使用外部分配器，取消注释 */
+        #define LV_MEM_POOL_ALLOC   lv_mymalloc          /* 如果使用外部分配器，取消注释 */
     #endif
 
 #else       /*LV_MEM_CUSTOM*/
-    #define LV_MEM_CUSTOM_INCLUDE <stdlib.h>   /* 动态内存函数的头 */
-    #define LV_MEM_CUSTOM_ALLOC   malloc
-    #define LV_MEM_CUSTOM_FREE    free
-    #define LV_MEM_CUSTOM_REALLOC realloc
+    #define LV_MEM_CUSTOM_INCLUDE "malloc.h"   /* 动态内存函数的头 */
+    #define LV_MEM_CUSTOM_ALLOC   lv_mymalloc
+    #define LV_MEM_CUSTOM_FREE    lv_myfree
+    #define LV_MEM_CUSTOM_REALLOC lv_myrealloc
 #endif     /*LV_MEM_CUSTOM*/
 
 /* 在渲染和其他内部处理机制期间使用的中间内存缓冲区的数量。
