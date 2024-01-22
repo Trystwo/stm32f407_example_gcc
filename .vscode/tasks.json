@@ -11,9 +11,10 @@
         {
             "label": "build",
             "type": "shell",
-            "command": "python",
+            "command": "make",
             "args": [
-                "build.py"
+                "all",
+                "-j16"
             ]
         },
         {
