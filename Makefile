@@ -10,12 +10,24 @@
 #   2015-07-22 - first version
 # ------------------------------------------------
 
+
+
 ######################################
 # target
 ######################################
 TARGET = stm32f407xx
-
-
+######################################
+# OS
+######################################
+OS = $(shell uname -s)
+######################################
+# FIND
+######################################
+ifeq ($(OS),Windows_NT)
+	FIND = C:/stm32_for_gcc/w64devkit/bin/find.exe
+else
+	FIND = find
+endif
 ######################################
 # building variables
 ######################################
@@ -34,9 +46,18 @@ BUILD_DIR = build
 # source
 ######################################
 # C sources
-SOURCES = ./
+SOURCES = \
+Core/Src \
+Drivers/BSP \
+Drivers/SYSTEM \
+Drivers/STM32F4xx_HAL_Driver/Src \
+Drivers/STM32F4xx_HAL_Driver/Src/Legacy \
+Middlewares/LVGL/GUI_APP \
+Middlewares/LVGL/GUI/lvgl \
+Middlewares/FreeRTOS \
+Middlewares/MALLOC 
 
-SOURCES_DIRS := $(shell find $(SOURCES) -type d)
+SOURCES_DIRS := $(shell $(FIND) $(SOURCES) -type d)
 C_SOURCES=$(foreach dir, $(SOURCES_DIRS), $(wildcard $(dir)/*.c))
 
 # ASM sources
@@ -187,6 +208,10 @@ $(BUILD_DIR): Makefile
 #######################################
 clean:
 	-rm -fR $(BUILD_DIR)
+
+print:
+	echo SOURCES_DIRS $(SOURCES_DIRS)
+	echo C_SOURCES $(C_SOURCES)
   
 #######################################
 # dependencies
