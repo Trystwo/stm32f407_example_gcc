@@ -141,6 +141,7 @@ Middlewares/FreeRTOS/portable/GCC/ARM_CM4F \
 Middlewares/LVGL/GUI/lvgl/examples/porting \
 Middlewares/LVGL/GUI_APP/demos/stress
 
+INC_DIR=$(foreach dir, $(INCLUDES), $(wildcard $(dir)/*.h))
 C_INCLUDES=$(patsubst %,-I%, $(INCLUDES))
 
 # compile gcc flags
@@ -182,7 +183,7 @@ vpath %.s $(sort $(dir $(ASM_SOURCES)))
 OBJECTS += $(addprefix $(BUILD_DIR)/,$(notdir $(ASMM_SOURCES:.S=.o)))
 vpath %.S $(sort $(dir $(ASMM_SOURCES)))
 
-$(BUILD_DIR)/%.o: %.c Makefile | $(BUILD_DIR)
+$(BUILD_DIR)/%.o: %.c Makefile $(INC_DIR) | $(BUILD_DIR)
 	$(CC) -c $(CFLAGS) -Wa,-a,-ad,-alms=$(BUILD_DIR)/$(<:.c=.lst) $< -o $@
 
 $(BUILD_DIR)/%.o: %.s Makefile | $(BUILD_DIR)
@@ -210,8 +211,7 @@ clean:
 	-rm -fR $(BUILD_DIR)
 
 print:
-	echo SOURCES_DIRS $(SOURCES_DIRS)
-	echo C_SOURCES $(C_SOURCES)
+	echo INC_DIR $(INC_DIR)
   
 #######################################
 # dependencies

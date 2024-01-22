@@ -89,10 +89,9 @@
  ***********************************************************************************/
  
 /* 默认的显示刷新周期。LVGL使用这个周期重绘修改过的区域 */
-#define LV_DISP_DEF_REFR_PERIOD             4      /*[ms]*/
-
+#define LV_DISP_DEF_REFR_PERIOD             5      /*[ms]*/
 /* 输入设备的读取周期(以毫秒为单位) */
-#define LV_INDEV_DEF_READ_PERIOD            4     /*[ms]*/
+#define LV_INDEV_DEF_READ_PERIOD            5     /*[ms]*/
 
 /* 使用自定义tick源，以毫秒为单位告诉运行时间。它不需要手动更新 `lv_tick_inc()` */
 #define LV_TICK_CUSTOM                      1
@@ -207,7 +206,7 @@
  *-----------*/
 
 /* 启用日志模块 */
-#define LV_USE_LOG                          0
+#define LV_USE_LOG                          1
 #if LV_USE_LOG
 
     /*应该添加多重要的日志:
@@ -221,7 +220,7 @@
 
     /*1: 使用'printf'打印日志;
      *0: 用户需要用' lv_log_register_print_cb() '注册回调函数 */
-    #define LV_LOG_PRINTF                   0
+    #define LV_LOG_PRINTF                   1
 
     /* 在产生大量日志的模块中启用/禁用LV_LOG_TRACE */
     #define LV_LOG_TRACE_MEM                1
@@ -256,14 +255,14 @@
  *-----------*/
 
 /* 1:显示CPU使用率和FPS */
-#define LV_USE_PERF_MONITOR                 0
+#define LV_USE_PERF_MONITOR                 1
 #if LV_USE_PERF_MONITOR
     #define LV_USE_PERF_MONITOR_POS LV_ALIGN_BOTTOM_RIGHT
 #endif
 
 /* 1：显示使用的内存和内存碎片
  * 要求LV_MEM_CUSTOM = 0*/
-#define LV_USE_MEM_MONITOR                  0
+#define LV_USE_MEM_MONITOR                  1
 #if LV_USE_MEM_MONITOR
     #define LV_USE_MEM_MONITOR_POS LV_ALIGN_BOTTOM_LEFT
 #endif
