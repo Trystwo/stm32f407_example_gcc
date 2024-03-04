@@ -19,11 +19,13 @@ TARGET = stm32f407xx
 ######################################
 # OS
 ######################################
-OS = $(shell uname -s)
+#OS = $(shell uname -s)
 ######################################
 # FIND
 ######################################
-ifeq ($(OS),MSYS_NT-10.0-22631)
+ifeq ($(OS),Windows_NT)
+	FIND = E:/msys64/usr/bin/find.exe
+else ifeq ($(OSTYPE), msys)
 	FIND = E:/msys64/usr/bin/find.exe
 else
 	FIND = find
@@ -186,26 +188,31 @@ vpath %.s $(sort $(dir $(ASM_SOURCES)))
 OBJECTS += $(addprefix $(BUILD_DIR)/,$(notdir $(ASMM_SOURCES:.S=.o)))
 vpath %.S $(sort $(dir $(ASMM_SOURCES)))
 
-$(BUILD_DIR)/%.o: %.c Makefile $(INC_DIR) | $(BUILD_DIR)
-	$(CC) -c $(CFLAGS) -Wa,-a,-ad,-alms=$(BUILD_DIR)/$(<:.c=.lst) $< -o $@
+$(BUILD_DIR)/%.o: %.c Makefile $(INC_DIR)
+	@echo 'CC  $<'
+	@mkdir -p $(dir $@)
+	@$(CC) -c $(CFLAGS) -Wa,-a,-ad,-alms=$(BUILD_DIR)/$(<:.c=.lst) $< -o $@
 
 $(BUILD_DIR)/%.o: %.s Makefile | $(BUILD_DIR)
-	$(AS) -c $(CFLAGS) $< -o $@
+	@echo 'AS  $<'
+	@$(AS) -c $(CFLAGS) $< -o $@
 $(BUILD_DIR)/%.o: %.S Makefile | $(BUILD_DIR)
-	$(AS) -c $(CFLAGS) $< -o $@
+	@echo 'AS  $<'
+	@$(AS) -c $(CFLAGS) $< -o $@
 
 $(BUILD_DIR)/$(TARGET).elf: $(OBJECTS) Makefile
-	$(CC) $(OBJECTS) $(LDFLAGS) -o $@
-	$(SZ) $@
+	@echo 'LD  $@'
+	@$(CC) $(OBJECTS) $(LDFLAGS) -o $@
 
 $(BUILD_DIR)/%.hex: $(BUILD_DIR)/%.elf | $(BUILD_DIR)
-	$(HEX) $< $@
+	@echo 'HEX $<'
+	@$(HEX) $< $@
 	
 $(BUILD_DIR)/%.bin: $(BUILD_DIR)/%.elf | $(BUILD_DIR)
-	$(BIN) $< $@	
-	
-$(BUILD_DIR): Makefile
-	mkdir -p $(sort $(dir $(OBJECTS)))
+	@echo 'BIN $<'
+	@$(BIN) $< $@	
+	@echo 'Size $<'
+	@$(SZ) $<
 
 #######################################
 # clean up
