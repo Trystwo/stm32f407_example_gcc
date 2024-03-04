@@ -11,19 +11,19 @@
  *********************/
 #include "lv_port_disp_template.h"
 #include "../../lvgl.h"
-/* µ¼ÈëlcdÇı¶¯Í·ÎÄ¼ş */
+/* å¯¼å…¥lcdé©±åŠ¨å¤´æ–‡ä»¶ */
 #include "lcd.h"
 
 /*********************
  *      DEFINES
  *********************/
-#define USE_SRAM        0      /* Ê¹ÓÃÍâ²¿sramÎª1£¬·ñÔòÎª0 */
+#define USE_SRAM        0      /* ä½¿ç”¨å¤–éƒ¨sramä¸º1ï¼Œå¦åˆ™ä¸º0 */
 #ifdef USE_SRAM
 #include "malloc.h"
 #endif
 
-#define MY_DISP_HOR_RES (320)   /* ÆÁÄ»¿í¶È */
-#define MY_DISP_VER_RES (240)   /* ÆÁÄ»¸ß¶È */
+#define MY_DISP_HOR_RES (320)   /* å±å¹•å®½åº¦ */
+#define MY_DISP_VER_RES (240)   /* å±å¹•é«˜åº¦ */
 
 /**********************
  *      TYPEDEFS
@@ -32,12 +32,12 @@
 /**********************
  *  STATIC PROTOTYPES
  **********************/
-/* ÏÔÊ¾Éè±¸³õÊ¼»¯º¯Êı */
+/* æ˜¾ç¤ºè®¾å¤‡åˆå§‹åŒ–å‡½æ•° */
 static void disp_init(void);
 
-/* ÏÔÊ¾Éè±¸Ë¢ĞÂº¯Êı */
+/* æ˜¾ç¤ºè®¾å¤‡åˆ·æ–°å‡½æ•° */
 static void disp_flush(lv_disp_drv_t * disp_drv, const lv_area_t * area, lv_color_t * color_p);
-/* GPU Ìî³äº¯Êı(Ê¹ÓÃGPUÊ±£¬ĞèÒªÊµÏÖ) */
+/* GPU å¡«å……å‡½æ•°(ä½¿ç”¨GPUæ—¶ï¼Œéœ€è¦å®ç°) */
 //static void gpu_fill(lv_disp_drv_t * disp_drv, lv_color_t * dest_buf, lv_coord_t dest_width,
 //        const lv_area_t * fill_area, lv_color_t color);
 
@@ -53,10 +53,10 @@ static void disp_flush(lv_disp_drv_t * disp_drv, const lv_area_t * area, lv_colo
  *   GLOBAL FUNCTIONS
  **********************/
 /**
- * @brief       LCD¼ÓËÙ»æÖÆº¯Êı
- * @param       (sx,sy),(ex,ey):Ìî³ä¾ØĞÎ¶Ô½Ç×ø±ê,ÇøÓò´óĞ¡Îª:(ex - sx + 1) * (ey - sy + 1)
- * @param       color:ÒªÌî³äµÄÑÕÉ«
- * @retval      ÎŞ
+ * @brief       LCDåŠ é€Ÿç»˜åˆ¶å‡½æ•°
+ * @param       (sx,sy),(ex,ey):å¡«å……çŸ©å½¢å¯¹è§’åæ ‡,åŒºåŸŸå¤§å°ä¸º:(ex - sx + 1) * (ey - sy + 1)
+ * @param       color:è¦å¡«å……çš„é¢œè‰²
+ * @retval      æ— 
  */
 void lcd_draw_fast_rgb_color(int16_t sx, int16_t sy,int16_t ex, int16_t ey, uint16_t *color)
 {
@@ -74,93 +74,93 @@ void lcd_draw_fast_rgb_color(int16_t sx, int16_t sy,int16_t ex, int16_t ey, uint
 }
 
 /**
- * @brief       ³õÊ¼»¯²¢×¢²áÏÔÊ¾Éè±¸
- * @param       ÎŞ
- * @retval      ÎŞ
+ * @brief       åˆå§‹åŒ–å¹¶æ³¨å†Œæ˜¾ç¤ºè®¾å¤‡
+ * @param       æ— 
+ * @retval      æ— 
  */
 void lv_port_disp_init(void)
 {
     /*-------------------------
-     * ³õÊ¼»¯ÏÔÊ¾Éè±¸
+     * åˆå§‹åŒ–æ˜¾ç¤ºè®¾å¤‡
      * -----------------------*/
     disp_init();
 
     /*-----------------------------
-     * ´´½¨Ò»¸ö»æÍ¼»º³åÇø
+     * åˆ›å»ºä¸€ä¸ªç»˜å›¾ç¼“å†²åŒº
      *----------------------------*/
 
     /**
-     * LVGL ĞèÒªÒ»¸ö»º³åÇøÓÃÀ´»æÖÆĞ¡²¿¼ş
-     * Ëæºó£¬Õâ¸ö»º³åÇøµÄÄÚÈİ»áÍ¨¹ıÏÔÊ¾Éè±¸µÄ `flush_cb`(ÏÔÊ¾Éè±¸Ë¢ĞÂº¯Êı) ¸´ÖÆµ½ÏÔÊ¾Éè±¸ÉÏ
-     * Õâ¸ö»º³åÇøµÄ´óĞ¡ĞèÒª´óÓÚÏÔÊ¾Éè±¸Ò»ĞĞµÄ´óĞ¡
+     * LVGL éœ€è¦ä¸€ä¸ªç¼“å†²åŒºç”¨æ¥ç»˜åˆ¶å°éƒ¨ä»¶
+     * éšåï¼Œè¿™ä¸ªç¼“å†²åŒºçš„å†…å®¹ä¼šé€šè¿‡æ˜¾ç¤ºè®¾å¤‡çš„ `flush_cb`(æ˜¾ç¤ºè®¾å¤‡åˆ·æ–°å‡½æ•°) å¤åˆ¶åˆ°æ˜¾ç¤ºè®¾å¤‡ä¸Š
+     * è¿™ä¸ªç¼“å†²åŒºçš„å¤§å°éœ€è¦å¤§äºæ˜¾ç¤ºè®¾å¤‡ä¸€è¡Œçš„å¤§å°
      *
-     * ÕâÀïÓĞ3ÖĞ»º³åÅäÖÃ:
-     * 1. µ¥»º³åÇø:
-     *      LVGL »á½«ÏÔÊ¾Éè±¸µÄÄÚÈİ»æÖÆµ½ÕâÀï£¬²¢½«ËûĞ´ÈëÏÔÊ¾Éè±¸¡£
+     * è¿™é‡Œæœ‰3ä¸­ç¼“å†²é…ç½®:
+     * 1. å•ç¼“å†²åŒº:
+     *      LVGL ä¼šå°†æ˜¾ç¤ºè®¾å¤‡çš„å†…å®¹ç»˜åˆ¶åˆ°è¿™é‡Œï¼Œå¹¶å°†ä»–å†™å…¥æ˜¾ç¤ºè®¾å¤‡ã€‚
      *
-     * 2. Ë«»º³åÇø:
-     *      LVGL »á½«ÏÔÊ¾Éè±¸µÄÄÚÈİ»æÖÆµ½ÆäÖĞÒ»¸ö»º³åÇø£¬²¢½«ËûĞ´ÈëÏÔÊ¾Éè±¸¡£
-     *      ĞèÒªÊ¹ÓÃ DMA ½«ÒªÏÔÊ¾ÔÚÏÔÊ¾Éè±¸µÄÄÚÈİĞ´Èë»º³åÇø¡£
-     *      µ±Êı¾İ´ÓµÚÒ»¸ö»º³åÇø·¢ËÍÊ±£¬Ëü½«Ê¹ LVGL ÄÜ¹»½«ÆÁÄ»µÄÏÂÒ»²¿·Ö»æÖÆµ½ÁíÒ»¸ö»º³åÇø¡£
-     *      ÕâÑùÊ¹µÃäÖÈ¾ºÍË¢ĞÂ¿ÉÒÔ²¢ĞĞÖ´ĞĞ¡£
+     * 2. åŒç¼“å†²åŒº:
+     *      LVGL ä¼šå°†æ˜¾ç¤ºè®¾å¤‡çš„å†…å®¹ç»˜åˆ¶åˆ°å…¶ä¸­ä¸€ä¸ªç¼“å†²åŒºï¼Œå¹¶å°†ä»–å†™å…¥æ˜¾ç¤ºè®¾å¤‡ã€‚
+     *      éœ€è¦ä½¿ç”¨ DMA å°†è¦æ˜¾ç¤ºåœ¨æ˜¾ç¤ºè®¾å¤‡çš„å†…å®¹å†™å…¥ç¼“å†²åŒºã€‚
+     *      å½“æ•°æ®ä»ç¬¬ä¸€ä¸ªç¼“å†²åŒºå‘é€æ—¶ï¼Œå®ƒå°†ä½¿ LVGL èƒ½å¤Ÿå°†å±å¹•çš„ä¸‹ä¸€éƒ¨åˆ†ç»˜åˆ¶åˆ°å¦ä¸€ä¸ªç¼“å†²åŒºã€‚
+     *      è¿™æ ·ä½¿å¾—æ¸²æŸ“å’Œåˆ·æ–°å¯ä»¥å¹¶è¡Œæ‰§è¡Œã€‚
      *
-     * 3. È«³ß´çË«»º³åÇø
-     *      ÉèÖÃÁ½¸öÆÁÄ»´óĞ¡µÄÈ«³ß´ç»º³åÇø£¬²¢ÇÒÉèÖÃ disp_drv.full_refresh = 1¡£
-     *      ÕâÑù£¬LVGL½«Ê¼ÖÕÒÔ 'flush_cb' µÄĞÎÊ½Ìá¹©Õû¸öäÖÈ¾ÆÁÄ»£¬ÄúÖ»Ğè¸ü¸ÄÖ¡»º³åÇøµÄµØÖ·¡£
+     * 3. å…¨å°ºå¯¸åŒç¼“å†²åŒº
+     *      è®¾ç½®ä¸¤ä¸ªå±å¹•å¤§å°çš„å…¨å°ºå¯¸ç¼“å†²åŒºï¼Œå¹¶ä¸”è®¾ç½® disp_drv.full_refresh = 1ã€‚
+     *      è¿™æ ·ï¼ŒLVGLå°†å§‹ç»ˆä»¥ 'flush_cb' çš„å½¢å¼æä¾›æ•´ä¸ªæ¸²æŸ“å±å¹•ï¼Œæ‚¨åªéœ€æ›´æ”¹å¸§ç¼“å†²åŒºçš„åœ°å€ã€‚
      */
 
-    /* µ¥»º³åÇøÊ¾Àı) */
+    /* å•ç¼“å†²åŒºç¤ºä¾‹) */
     static lv_disp_draw_buf_t draw_buf_dsc_1;
 #if USE_SRAM
-    static lv_color_t buf_1 = mymalloc(SRAMEX, MY_DISP_HOR_RES * MY_DISP_VER_RES);              /* ÉèÖÃ»º³åÇøµÄ´óĞ¡ÎªÆÁÄ»µÄÈ«³ß´ç´óĞ¡ */
-    lv_disp_draw_buf_init(&draw_buf_dsc_1, buf_1, NULL, MY_DISP_HOR_RES * MY_DISP_VER_RES);     /* ³õÊ¼»¯ÏÔÊ¾»º³åÇø */
+    static lv_color_t buf_1 = mymalloc(SRAMEX, MY_DISP_HOR_RES * MY_DISP_VER_RES);              /* è®¾ç½®ç¼“å†²åŒºçš„å¤§å°ä¸ºå±å¹•çš„å…¨å°ºå¯¸å¤§å° */
+    lv_disp_draw_buf_init(&draw_buf_dsc_1, buf_1, NULL, MY_DISP_HOR_RES * MY_DISP_VER_RES);     /* åˆå§‹åŒ–æ˜¾ç¤ºç¼“å†²åŒº */
 #else
-    static lv_color_t buf_1[MY_DISP_HOR_RES * 240] __attribute__((section(".sram_data")));                                              /* ÉèÖÃ»º³åÇøµÄ´óĞ¡Îª 10 ĞĞÆÁÄ»µÄ´óĞ¡ */
-    lv_disp_draw_buf_init(&draw_buf_dsc_1, buf_1, NULL, MY_DISP_HOR_RES * 240);                  /* ³õÊ¼»¯ÏÔÊ¾»º³åÇø */
+    static lv_color_t buf_1[MY_DISP_HOR_RES * 240] __attribute__((section(".sram_data")));                                              /* è®¾ç½®ç¼“å†²åŒºçš„å¤§å°ä¸º 10 è¡Œå±å¹•çš„å¤§å° */
+    lv_disp_draw_buf_init(&draw_buf_dsc_1, buf_1, NULL, MY_DISP_HOR_RES * 240);                  /* åˆå§‹åŒ–æ˜¾ç¤ºç¼“å†²åŒº */
 #endif
 
-    /* Ë«»º³åÇøÊ¾Àı) */
+    /* åŒç¼“å†²åŒºç¤ºä¾‹) */
 //    static lv_disp_draw_buf_t draw_buf_dsc_2;
-//    static lv_color_t buf_2_1[MY_DISP_HOR_RES * 10];                                            /* ÉèÖÃ»º³åÇøµÄ´óĞ¡Îª 10 ĞĞÆÁÄ»µÄ´óĞ¡ */
-//    static lv_color_t buf_2_2[MY_DISP_HOR_RES * 10];                                            /* ÉèÖÃÁíÒ»¸ö»º³åÇøµÄ´óĞ¡Îª 10 ĞĞÆÁÄ»µÄ´óĞ¡ */
-//    lv_disp_draw_buf_init(&draw_buf_dsc_2, buf_2_1, buf_2_2, MY_DISP_HOR_RES * 10);             /* ³õÊ¼»¯ÏÔÊ¾»º³åÇø */
+//    static lv_color_t buf_2_1[MY_DISP_HOR_RES * 10];                                            /* è®¾ç½®ç¼“å†²åŒºçš„å¤§å°ä¸º 10 è¡Œå±å¹•çš„å¤§å° */
+//    static lv_color_t buf_2_2[MY_DISP_HOR_RES * 10];                                            /* è®¾ç½®å¦ä¸€ä¸ªç¼“å†²åŒºçš„å¤§å°ä¸º 10 è¡Œå±å¹•çš„å¤§å° */
+//    lv_disp_draw_buf_init(&draw_buf_dsc_2, buf_2_1, buf_2_2, MY_DISP_HOR_RES * 10);             /* åˆå§‹åŒ–æ˜¾ç¤ºç¼“å†²åŒº */
 
-    /* È«³ß´çË«»º³åÇøÊ¾Àı) ²¢ÇÒÔÚÏÂÃæÉèÖÃ disp_drv.full_refresh = 1 */
+    /* å…¨å°ºå¯¸åŒç¼“å†²åŒºç¤ºä¾‹) å¹¶ä¸”åœ¨ä¸‹é¢è®¾ç½® disp_drv.full_refresh = 1 */
 //    static lv_disp_draw_buf_t draw_buf_dsc_3;
-//    static lv_color_t buf_3_1[MY_DISP_HOR_RES * MY_DISP_VER_RES];                               /* ÉèÖÃÒ»¸öÈ«³ß´çµÄ»º³åÇø */
-//    static lv_color_t buf_3_2[MY_DISP_HOR_RES * MY_DISP_VER_RES];                               /* ÉèÖÃÁíÒ»¸öÈ«³ß´çµÄ»º³åÇø */
-//    lv_disp_draw_buf_init(&draw_buf_dsc_3, buf_3_1, buf_3_2, MY_DISP_HOR_RES * MY_DISP_VER_RES);/* ³õÊ¼»¯ÏÔÊ¾»º³åÇø */
+//    static lv_color_t buf_3_1[MY_DISP_HOR_RES * MY_DISP_VER_RES];                               /* è®¾ç½®ä¸€ä¸ªå…¨å°ºå¯¸çš„ç¼“å†²åŒº */
+//    static lv_color_t buf_3_2[MY_DISP_HOR_RES * MY_DISP_VER_RES];                               /* è®¾ç½®å¦ä¸€ä¸ªå…¨å°ºå¯¸çš„ç¼“å†²åŒº */
+//    lv_disp_draw_buf_init(&draw_buf_dsc_3, buf_3_1, buf_3_2, MY_DISP_HOR_RES * MY_DISP_VER_RES);/* åˆå§‹åŒ–æ˜¾ç¤ºç¼“å†²åŒº */
 
     /*-----------------------------------
-     * ÔÚ LVGL ÖĞ×¢²áÏÔÊ¾Éè±¸
+     * åœ¨ LVGL ä¸­æ³¨å†Œæ˜¾ç¤ºè®¾å¤‡
      *----------------------------------*/
 
-    static lv_disp_drv_t disp_drv;                  /* ÏÔÊ¾Éè±¸µÄÃèÊö·û */
-    lv_disp_drv_init(&disp_drv);                    /* ³õÊ¼»¯ÎªÄ¬ÈÏÖµ */
+    static lv_disp_drv_t disp_drv;                  /* æ˜¾ç¤ºè®¾å¤‡çš„æè¿°ç¬¦ */
+    lv_disp_drv_init(&disp_drv);                    /* åˆå§‹åŒ–ä¸ºé»˜è®¤å€¼ */
 
-    /* ½¨Á¢·ÃÎÊÏÔÊ¾Éè±¸µÄº¯Êı  */
+    /* å»ºç«‹è®¿é—®æ˜¾ç¤ºè®¾å¤‡çš„å‡½æ•°  */
 
-    /* ÉèÖÃÏÔÊ¾Éè±¸µÄ·Ö±æÂÊ
-     * ÕâÀïÎªÁËÊÊÅäÕıµãÔ­×ÓµÄ¶à¿îÆÁÄ»£¬²ÉÓÃÁË¶¯Ì¬»ñÈ¡µÄ·½Ê½£¬
-     * ÔÚÊµ¼ÊÏîÄ¿ÖĞ£¬Í¨³£ËùÊ¹ÓÃµÄÆÁÄ»´óĞ¡ÊÇ¹Ì¶¨µÄ£¬Òò´Ë¿ÉÒÔÖ±½ÓÉèÖÃÎªÆÁÄ»µÄ´óĞ¡ */
+    /* è®¾ç½®æ˜¾ç¤ºè®¾å¤‡çš„åˆ†è¾¨ç‡
+     * è¿™é‡Œä¸ºäº†é€‚é…æ­£ç‚¹åŸå­çš„å¤šæ¬¾å±å¹•ï¼Œé‡‡ç”¨äº†åŠ¨æ€è·å–çš„æ–¹å¼ï¼Œ
+     * åœ¨å®é™…é¡¹ç›®ä¸­ï¼Œé€šå¸¸æ‰€ä½¿ç”¨çš„å±å¹•å¤§å°æ˜¯å›ºå®šçš„ï¼Œå› æ­¤å¯ä»¥ç›´æ¥è®¾ç½®ä¸ºå±å¹•çš„å¤§å° */
     disp_drv.hor_res = lcddev.width;
     disp_drv.ver_res = lcddev.height;
 
-    /* ÓÃÀ´½«»º³åÇøµÄÄÚÈİ¸´ÖÆµ½ÏÔÊ¾Éè±¸ */
+    /* ç”¨æ¥å°†ç¼“å†²åŒºçš„å†…å®¹å¤åˆ¶åˆ°æ˜¾ç¤ºè®¾å¤‡ */
     disp_drv.flush_cb = disp_flush;
 
-    /* ÉèÖÃÏÔÊ¾»º³åÇø */
+    /* è®¾ç½®æ˜¾ç¤ºç¼“å†²åŒº */
     disp_drv.draw_buf = &draw_buf_dsc_1;
 
-    /* È«³ß´çË«»º³åÇøÊ¾Àı)*/
+    /* å…¨å°ºå¯¸åŒç¼“å†²åŒºç¤ºä¾‹)*/
     //disp_drv.full_refresh = 1
 
-    /* Èç¹ûÄúÓĞGPU£¬ÇëÊ¹ÓÃÑÕÉ«Ìî³äÄÚ´æÕóÁĞ
-     * ×¢Òâ£¬Äã¿ÉÒÔÔÚ lv_conf.h ÖĞÊ¹ÄÜ LVGL ÄÚÖÃÖ§³ÖµÄ GPUs
-     * µ«Èç¹ûÄãÓĞ²»Í¬µÄ GPU£¬ÄÇÃ´¿ÉÒÔÊ¹ÓÃÕâ¸ö»Øµ÷º¯Êı¡£ */
+    /* å¦‚æœæ‚¨æœ‰GPUï¼Œè¯·ä½¿ç”¨é¢œè‰²å¡«å……å†…å­˜é˜µåˆ—
+     * æ³¨æ„ï¼Œä½ å¯ä»¥åœ¨ lv_conf.h ä¸­ä½¿èƒ½ LVGL å†…ç½®æ”¯æŒçš„ GPUs
+     * ä½†å¦‚æœä½ æœ‰ä¸åŒçš„ GPUï¼Œé‚£ä¹ˆå¯ä»¥ä½¿ç”¨è¿™ä¸ªå›è°ƒå‡½æ•°ã€‚ */
     //disp_drv.gpu_fill_cb = gpu_fill;
 
-    /* ×¢²áÏÔÊ¾Éè±¸ */
+    /* æ³¨å†Œæ˜¾ç¤ºè®¾å¤‡ */
     lv_disp_drv_register(&disp_drv);
 }
 
@@ -169,31 +169,31 @@ void lv_port_disp_init(void)
  **********************/
 
 /**
- * @brief       ³õÊ¼»¯ÏÔÊ¾Éè±¸ºÍ±ØÒªµÄÍâÎ§Éè±¸
- * @param       ÎŞ
- * @retval      ÎŞ
+ * @brief       åˆå§‹åŒ–æ˜¾ç¤ºè®¾å¤‡å’Œå¿…è¦çš„å¤–å›´è®¾å¤‡
+ * @param       æ— 
+ * @retval      æ— 
  */
 static void disp_init(void)
 {
     /*You code here*/
-    lcd_init();         /* ³õÊ¼»¯LCD */
-    lcd_display_dir(1); /* ÉèÖÃºáÆÁ */
+    lcd_init();         /* åˆå§‹åŒ–LCD */
+    lcd_display_dir(0); /* è®¾ç½®æ¨ªå± */
 }
 
 /**
- * @brief       ½«ÄÚ²¿»º³åÇøµÄÄÚÈİË¢ĞÂµ½ÏÔÊ¾ÆÁÉÏµÄÌØ¶¨ÇøÓò
- *   @note      ¿ÉÒÔÊ¹ÓÃ DMA »òÕßÈÎºÎÓ²¼şÔÚºóÌ¨¼ÓËÙÖ´ĞĞÕâ¸ö²Ù×÷
- *              µ«ÊÇ£¬ĞèÒªÔÚË¢ĞÂÍê³Éºóµ÷ÓÃº¯Êı 'lv_disp_flush_ready()'
+ * @brief       å°†å†…éƒ¨ç¼“å†²åŒºçš„å†…å®¹åˆ·æ–°åˆ°æ˜¾ç¤ºå±ä¸Šçš„ç‰¹å®šåŒºåŸŸ
+ *   @note      å¯ä»¥ä½¿ç”¨ DMA æˆ–è€…ä»»ä½•ç¡¬ä»¶åœ¨åå°åŠ é€Ÿæ‰§è¡Œè¿™ä¸ªæ“ä½œ
+ *              ä½†æ˜¯ï¼Œéœ€è¦åœ¨åˆ·æ–°å®Œæˆåè°ƒç”¨å‡½æ•° 'lv_disp_flush_ready()'
  *
- * @param       disp_drv    : ÏÔÊ¾Éè±¸
- *   @arg       area        : ÒªË¢ĞÂµÄÇøÓò£¬°üº¬ÁËÌî³ä¾ØĞÎµÄ¶Ô½Ç×ø±ê
- *   @arg       color_p     : ÑÕÉ«Êı×é
+ * @param       disp_drv    : æ˜¾ç¤ºè®¾å¤‡
+ *   @arg       area        : è¦åˆ·æ–°çš„åŒºåŸŸï¼ŒåŒ…å«äº†å¡«å……çŸ©å½¢çš„å¯¹è§’åæ ‡
+ *   @arg       color_p     : é¢œè‰²æ•°ç»„
  *
- * @retval      ÎŞ
+ * @retval      æ— 
  */
 static void disp_flush(lv_disp_drv_t * disp_drv, const lv_area_t * area, lv_color_t * color_p)
 {
-    /* LVGL ¹Ù·½¸ø³öµÄÒ»¸ö´òµãË¢ĞÂÆÁÄ»µÄÀı×Ó£¬µ«Õâ¸öĞ§ÂÊÊÇ×îµÍĞ§µÄ */
+    /* LVGL å®˜æ–¹ç»™å‡ºçš„ä¸€ä¸ªæ‰“ç‚¹åˆ·æ–°å±å¹•çš„ä¾‹å­ï¼Œä½†è¿™ä¸ªæ•ˆç‡æ˜¯æœ€ä½æ•ˆçš„ */
 
 //    int32_t x;
 //    int32_t y;
@@ -205,29 +205,29 @@ static void disp_flush(lv_disp_drv_t * disp_drv, const lv_area_t * area, lv_colo
 //        }
 //    }
 
-//    /* ÔÚÖ¸¶¨ÇøÓòÄÚÌî³äÖ¸¶¨ÑÕÉ«¿é */
+//    /* åœ¨æŒ‡å®šåŒºåŸŸå†…å¡«å……æŒ‡å®šé¢œè‰²å— */
 //    lcd_color_fill(area->x1, area->y1, area->x2, area->y2, (uint16_t *)color_p);
     lcd_draw_fast_rgb_color(area->x1,area->y1,area->x2,area->y2,(uint16_t*)color_p);
 
-    /* ÖØÒª!!!
-     * Í¨ÖªÍ¼ĞÎ¿â£¬ÒÑ¾­Ë¢ĞÂÍê±ÏÁË */
+    /* é‡è¦!!!
+     * é€šçŸ¥å›¾å½¢åº“ï¼Œå·²ç»åˆ·æ–°å®Œæ¯•äº† */
     lv_disp_flush_ready(disp_drv);
 }
 
-/* ¿ÉÑ¡: GPU ½Ó¿Ú */
+/* å¯é€‰: GPU æ¥å£ */
 
-/* Èç¹ûÄãµÄ MCU ÓĞÓ²¼ş¼ÓËÙÆ÷ (GPU) ÄÇÃ´Äã¿ÉÒÔÊ¹ÓÃËüÀ´ÎªÄÚ´æÌî³äÑÕÉ« */
+/* å¦‚æœä½ çš„ MCU æœ‰ç¡¬ä»¶åŠ é€Ÿå™¨ (GPU) é‚£ä¹ˆä½ å¯ä»¥ä½¿ç”¨å®ƒæ¥ä¸ºå†…å­˜å¡«å……é¢œè‰² */
 /**
- * @brief       Ê¹ÓÃ GPU ½øĞĞÑÕÉ«Ìî³ä
- *   @note      ÈçÓĞ MCU ÓĞÓ²¼ş¼ÓËÙÆ÷ (GPU),ÄÇÃ´¿ÉÒÔÓÃËüÀ´ÎªÄÚ´æ½øĞĞÑÕÉ«Ìî³ä
+ * @brief       ä½¿ç”¨ GPU è¿›è¡Œé¢œè‰²å¡«å……
+ *   @note      å¦‚æœ‰ MCU æœ‰ç¡¬ä»¶åŠ é€Ÿå™¨ (GPU),é‚£ä¹ˆå¯ä»¥ç”¨å®ƒæ¥ä¸ºå†…å­˜è¿›è¡Œé¢œè‰²å¡«å……
  *
- * @param       disp_drv    : ÏÔÊ¾Éè±¸
- *   @arg       dest_buf    : Ä¿±ê»º³åÇø
- *   @arg       dest_width  : Ä¿±ê»º³åÇøµÄ¿í¶È
- *   @arg       fill_area   : Ìî³äµÄÇøÓò
- *   @arg       color       : ÑÕÉ«Êı×é
+ * @param       disp_drv    : æ˜¾ç¤ºè®¾å¤‡
+ *   @arg       dest_buf    : ç›®æ ‡ç¼“å†²åŒº
+ *   @arg       dest_width  : ç›®æ ‡ç¼“å†²åŒºçš„å®½åº¦
+ *   @arg       fill_area   : å¡«å……çš„åŒºåŸŸ
+ *   @arg       color       : é¢œè‰²æ•°ç»„
  *
- * @retval      ÎŞ
+ * @retval      æ— 
  */
 //static void gpu_fill(lv_disp_drv_t * disp_drv, lv_color_t * dest_buf, lv_coord_t dest_width,
 //                    const lv_area_t * fill_area, lv_color_t color)

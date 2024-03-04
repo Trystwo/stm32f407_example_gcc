@@ -23,8 +23,8 @@ OS = $(shell uname -s)
 ######################################
 # FIND
 ######################################
-ifeq ($(OS),Windows_NT)
-	FIND = C:/stm32_for_gcc/w64devkit/bin/find.exe
+ifeq ($(OS),MSYS_NT-10.0-22631)
+	FIND = E:/msys64/usr/bin/find.exe
 else
 	FIND = find
 endif
@@ -139,7 +139,10 @@ Middlewares/FreeRTOS/include \
 Middlewares/MALLOC \
 Middlewares/FreeRTOS/portable/GCC/ARM_CM4F \
 Middlewares/LVGL/GUI/lvgl/examples/porting \
-Middlewares/LVGL/GUI_APP/demos/stress
+Middlewares/LVGL/GUI_APP/demos/stress \
+Middlewares/LVGL/GUI_APP/demos/music \
+Middlewares/LVGL/GUI_APP/ui \
+Middlewares/LVGL/GUI_APP/ui/components
 
 INC_DIR=$(foreach dir, $(INCLUDES), $(wildcard $(dir)/*.h))
 C_INCLUDES=$(patsubst %,-I%, $(INCLUDES))

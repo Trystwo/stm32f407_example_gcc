@@ -110,7 +110,9 @@
           "Middlewares/MALLOC",
           "Middlewares/FreeRTOS/portable/GCC/ARM_CM4F",
           "Middlewares/LVGL/GUI/lvgl/examples/porting",
-          "Middlewares/LVGL/GUI_APP/demos/stress"
+          "Middlewares/LVGL/GUI_APP/demos/stress",
+          "Middlewares/LVGL/GUI_APP/demos/music",
+          "Middlewares/LVGL/GUI_APP/ui"
         ],
         "libList": [],
         "sourceDirList": [],

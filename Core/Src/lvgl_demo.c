@@ -1,19 +1,19 @@
 /**
  ****************************************************************************************************
  * @file        lvgl_demo.c
- * @author      ÕıµãÔ­×ÓÍÅ¶Ó(ALIENTEK)
+ * @author      æ­£ç‚¹åŸå­å›¢é˜Ÿ(ALIENTEK)
  * @version     V1.0
  * @date        2022-01-11
- * @brief       LVGL V8²Ù×÷ÏµÍ³ÒÆÖ²
- * @license     Copyright (c) 2020-2032, ¹ãÖİÊĞĞÇÒíµç×Ó¿Æ¼¼ÓĞÏŞ¹«Ë¾
+ * @brief       LVGL V8æ“ä½œç³»ç»Ÿç§»æ¤
+ * @license     Copyright (c) 2020-2032, å¹¿å·å¸‚æ˜Ÿç¿¼ç”µå­ç§‘æŠ€æœ‰é™å…¬å¸
  ****************************************************************************************************
  * @attention
  *
- * ÊµÑéÆ½Ì¨:ÕıµãÔ­×Ó Ì½Ë÷Õß F407¿ª·¢°å
- * ÔÚÏßÊÓÆµ:www.yuanzige.com
- * ¼¼ÊõÂÛÌ³:www.openedv.com
- * ¹«Ë¾ÍøÖ·:www.alientek.com
- * ¹ºÂòµØÖ·:openedv.taobao.com
+ * å®éªŒå¹³å°:æ­£ç‚¹åŸå­ æ¢ç´¢è€… F407å¼€å‘æ¿
+ * åœ¨çº¿è§†é¢‘:www.yuanzige.com
+ * æŠ€æœ¯è®ºå›:www.openedv.com
+ * å…¬å¸ç½‘å€:www.alientek.com
+ * è´­ä¹°åœ°å€:openedv.taobao.com
  *
  ****************************************************************************************************
  */
@@ -27,69 +27,71 @@
 #include "lv_port_disp_template.h"
 #include "lv_port_indev_template.h"
 #include "lv_demo_stress.h"
+#include "lv_demo_music.h"
+#include "ui.h"
 
 
 /******************************************************************************************************/
-/*FreeRTOSÅäÖÃ*/
+/*FreeRTOSé…ç½®*/
 
-/* START_TASK ÈÎÎñ ÅäÖÃ
- * °üÀ¨: ÈÎÎñ¾ä±ú ÈÎÎñÓÅÏÈ¼¶ ¶ÑÕ»´óĞ¡ ´´½¨ÈÎÎñ
+/* START_TASK ä»»åŠ¡ é…ç½®
+ * åŒ…æ‹¬: ä»»åŠ¡å¥æŸ„ ä»»åŠ¡ä¼˜å…ˆçº§ å †æ ˆå¤§å° åˆ›å»ºä»»åŠ¡
  */
-#define START_TASK_PRIO     1           /* ÈÎÎñÓÅÏÈ¼¶ */
-#define START_STK_SIZE      128         /* ÈÎÎñ¶ÑÕ»´óĞ¡ */
-TaskHandle_t StartTask_Handler;         /* ÈÎÎñ¾ä±ú */
-void start_task(void *pvParameters);    /* ÈÎÎñº¯Êı */
+#define START_TASK_PRIO     1           /* ä»»åŠ¡ä¼˜å…ˆçº§ */
+#define START_STK_SIZE      128         /* ä»»åŠ¡å †æ ˆå¤§å° */
+TaskHandle_t StartTask_Handler;         /* ä»»åŠ¡å¥æŸ„ */
+void start_task(void *pvParameters);    /* ä»»åŠ¡å‡½æ•° */
 
-/* LV_DEMO_TASK ÈÎÎñ ÅäÖÃ
- * °üÀ¨: ÈÎÎñ¾ä±ú ÈÎÎñÓÅÏÈ¼¶ ¶ÑÕ»´óĞ¡ ´´½¨ÈÎÎñ
+/* LV_DEMO_TASK ä»»åŠ¡ é…ç½®
+ * åŒ…æ‹¬: ä»»åŠ¡å¥æŸ„ ä»»åŠ¡ä¼˜å…ˆçº§ å †æ ˆå¤§å° åˆ›å»ºä»»åŠ¡
  */
-#define LV_DEMO_TASK_PRIO   3           /* ÈÎÎñÓÅÏÈ¼¶ */
-#define LV_DEMO_STK_SIZE    1024        /* ÈÎÎñ¶ÑÕ»´óĞ¡ */
-TaskHandle_t LV_DEMOTask_Handler;       /* ÈÎÎñ¾ä±ú */
-void lv_demo_task(void *pvParameters);  /* ÈÎÎñº¯Êı */
+#define LV_DEMO_TASK_PRIO   3           /* ä»»åŠ¡ä¼˜å…ˆçº§ */
+#define LV_DEMO_STK_SIZE    1024        /* ä»»åŠ¡å †æ ˆå¤§å° */
+TaskHandle_t LV_DEMOTask_Handler;       /* ä»»åŠ¡å¥æŸ„ */
+void lv_demo_task(void *pvParameters);  /* ä»»åŠ¡å‡½æ•° */
 
-/* LED_TASK ÈÎÎñ ÅäÖÃ
- * °üÀ¨: ÈÎÎñ¾ä±ú ÈÎÎñÓÅÏÈ¼¶ ¶ÑÕ»´óĞ¡ ´´½¨ÈÎÎñ
+/* LED_TASK ä»»åŠ¡ é…ç½®
+ * åŒ…æ‹¬: ä»»åŠ¡å¥æŸ„ ä»»åŠ¡ä¼˜å…ˆçº§ å †æ ˆå¤§å° åˆ›å»ºä»»åŠ¡
  */
-#define LED_TASK_PRIO       4           /* ÈÎÎñÓÅÏÈ¼¶ */
-#define LED_STK_SIZE        128         /* ÈÎÎñ¶ÑÕ»´óĞ¡ */
-TaskHandle_t LEDTask_Handler;           /* ÈÎÎñ¾ä±ú */
-void led_task(void *pvParameters);      /* ÈÎÎñº¯Êı */
+#define LED_TASK_PRIO       4           /* ä»»åŠ¡ä¼˜å…ˆçº§ */
+#define LED_STK_SIZE        128         /* ä»»åŠ¡å †æ ˆå¤§å° */
+TaskHandle_t LEDTask_Handler;           /* ä»»åŠ¡å¥æŸ„ */
+void led_task(void *pvParameters);      /* ä»»åŠ¡å‡½æ•° */
 /******************************************************************************************************/
 
 /**
- * @brief       lvgl_demoÈë¿Úº¯Êı
- * @param       ÎŞ
- * @retval      ÎŞ
+ * @brief       lvgl_demoå…¥å£å‡½æ•°
+ * @param       æ— 
+ * @retval      æ— 
  */
 void lvgl_demo(void)
 {
-    lv_init();                                          /* lvglÏµÍ³³õÊ¼»¯ */
-    lv_port_disp_init();                                /* lvglÏÔÊ¾½Ó¿Ú³õÊ¼»¯,·ÅÔÚlv_init()µÄºóÃæ */
-    lv_port_indev_init();                               /* lvglÊäÈë½Ó¿Ú³õÊ¼»¯,·ÅÔÚlv_init()µÄºóÃæ */
+    lv_init();                                          /* lvglç³»ç»Ÿåˆå§‹åŒ– */
+    lv_port_disp_init();                                /* lvglæ˜¾ç¤ºæ¥å£åˆå§‹åŒ–,æ”¾åœ¨lv_init()çš„åé¢ */
+    lv_port_indev_init();                               /* lvglè¾“å…¥æ¥å£åˆå§‹åŒ–,æ”¾åœ¨lv_init()çš„åé¢ */
 
-    xTaskCreate((TaskFunction_t )start_task,            /* ÈÎÎñº¯Êı */
-                (const char*    )"start_task",          /* ÈÎÎñÃû³Æ */
-                (uint16_t       )START_STK_SIZE,        /* ÈÎÎñ¶ÑÕ»´óĞ¡ */
-                (void*          )NULL,                  /* ´«µİ¸øÈÎÎñº¯ÊıµÄ²ÎÊı */
-                (UBaseType_t    )START_TASK_PRIO,       /* ÈÎÎñÓÅÏÈ¼¶ */
-                (TaskHandle_t*  )&StartTask_Handler);   /* ÈÎÎñ¾ä±ú */
+    xTaskCreate((TaskFunction_t )start_task,            /* ä»»åŠ¡å‡½æ•° */
+                (const char*    )"start_task",          /* ä»»åŠ¡åç§° */
+                (uint16_t       )START_STK_SIZE,        /* ä»»åŠ¡å †æ ˆå¤§å° */
+                (void*          )NULL,                  /* ä¼ é€’ç»™ä»»åŠ¡å‡½æ•°çš„å‚æ•° */
+                (UBaseType_t    )START_TASK_PRIO,       /* ä»»åŠ¡ä¼˜å…ˆçº§ */
+                (TaskHandle_t*  )&StartTask_Handler);   /* ä»»åŠ¡å¥æŸ„ */
 
-    vTaskStartScheduler();                              /* ¿ªÆôÈÎÎñµ÷¶È */
+    vTaskStartScheduler();                              /* å¼€å¯ä»»åŠ¡è°ƒåº¦ */
 }
 
 /**
  * @brief       start_task
- * @param       pvParameters : ´«Èë²ÎÊı(Î´ÓÃµ½)
- * @retval      ÎŞ
+ * @param       pvParameters : ä¼ å…¥å‚æ•°(æœªç”¨åˆ°)
+ * @retval      æ— 
  */
 void start_task(void *pvParameters)
 {
     pvParameters = pvParameters;
     
-    taskENTER_CRITICAL();           /* ½øÈëÁÙ½çÇø */
+    taskENTER_CRITICAL();           /* è¿›å…¥ä¸´ç•ŒåŒº */
 
-    /* ´´½¨LVGLÈÎÎñ */
+    /* åˆ›å»ºLVGLä»»åŠ¡ */
     xTaskCreate((TaskFunction_t )lv_demo_task,
                 (const char*    )"lv_demo_task",
                 (uint16_t       )LV_DEMO_STK_SIZE, 
@@ -97,7 +99,7 @@ void start_task(void *pvParameters)
                 (UBaseType_t    )LV_DEMO_TASK_PRIO,
                 (TaskHandle_t*  )&LV_DEMOTask_Handler);
 
-    /* LED²âÊÔÈÎÎñ */
+    /* LEDæµ‹è¯•ä»»åŠ¡ */
     xTaskCreate((TaskFunction_t )led_task,
                 (const char*    )"led_task",
                 (uint16_t       )LED_STK_SIZE,
@@ -105,32 +107,33 @@ void start_task(void *pvParameters)
                 (UBaseType_t    )LED_TASK_PRIO,
                 (TaskHandle_t*  )&LEDTask_Handler);
 
-    taskEXIT_CRITICAL();            /* ÍË³öÁÙ½çÇø */
-    vTaskDelete(StartTask_Handler); /* É¾³ı¿ªÊ¼ÈÎÎñ */
+    taskEXIT_CRITICAL();            /* é€€å‡ºä¸´ç•ŒåŒº */
+    vTaskDelete(StartTask_Handler); /* åˆ é™¤å¼€å§‹ä»»åŠ¡ */
 }
 
 /**
- * @brief       LVGLÔËĞĞÀı³Ì
- * @param       pvParameters : ´«Èë²ÎÊı(Î´ÓÃµ½)
- * @retval      ÎŞ
+ * @brief       LVGLè¿è¡Œä¾‹ç¨‹
+ * @param       pvParameters : ä¼ å…¥å‚æ•°(æœªç”¨åˆ°)
+ * @retval      æ— 
  */
 void lv_demo_task(void *pvParameters)
 {
     pvParameters = pvParameters;
     
-    lv_demo_music();       /* ²âÊÔµÄdemo */
+    //lv_demo_stress();       /* æµ‹è¯•çš„demo */
+	  lv_demo_music();
     
     while(1)
     {
-        lv_timer_handler(); /* LVGL¼ÆÊ±Æ÷ */
+        lv_timer_handler(); /* LVGLè®¡æ—¶å™¨ */
         vTaskDelay(5);
     }
 }
 
 /**
  * @brief       led_task
- * @param       pvParameters : ´«Èë²ÎÊı(Î´ÓÃµ½)
- * @retval      ÎŞ
+ * @param       pvParameters : ä¼ å…¥å‚æ•°(æœªç”¨åˆ°)
+ * @retval      æ— 
  */
 void led_task(void *pvParameters)
 {

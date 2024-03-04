@@ -1,0 +1,9 @@
+{
+    "files.associations": {
+        "ui.h": "c",
+        "lvgl.h": "c",
+        "sys.h": "c",
+        "main.h": "c"
+    },
+    "C_Cpp.default.compilerPath": "c:\\stm32_for_gcc\\gcc-arm-none-eabi-10.3-2021.10\\bin\\arm-none-eabi-gcc.exe"
+}
