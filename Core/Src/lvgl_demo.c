@@ -121,7 +121,8 @@ void lv_demo_task(void *pvParameters)
     pvParameters = pvParameters;
     
     //lv_demo_stress();       /* 测试的demo */
-	  lv_demo_music();
+	  //lv_demo_music();
+      ui_init();
     
     while(1)
     {

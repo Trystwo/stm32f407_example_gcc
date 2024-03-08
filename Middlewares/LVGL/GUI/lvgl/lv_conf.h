@@ -35,7 +35,7 @@
 /* 1: 启用屏幕透明.
  * 对OSD或其他有重叠的gui很有用.
  * 要求' LV_COLOR_DEPTH = 32 '颜色和屏幕的样式应该被修改: `style.body.opa = ...`*/
-#define LV_COLOR_SCREEN_TRANSP              0
+#define LV_COLOR_SCREEN_TRANSP              1
 
 /* 调整颜色混合功能四舍五入。gpu可能会以不同的方式计算颜色混合。
  * 0:取整，64:从x.75取整，128:从half取整，192:从x.25取整，254:从half取整 */
@@ -56,7 +56,7 @@
 #define LV_MEM_CUSTOM                       0
 #if LV_MEM_CUSTOM == 0
     /* `lv_mem_alloc()`可获得的内存大小(以字节为单位)(>= 2kB) */
-    #define LV_MEM_SIZE                     (46U * 1024U)          /*[字节]*/
+    #define LV_MEM_SIZE                     (100U * 1024U)          /*[字节]*/
 
     /* 为内存池设置一个地址，而不是将其作为普通数组分配。也可以在外部SRAM中。 */
     #define LV_MEM_ADR                      0     /*0: 未使用*/
@@ -67,7 +67,7 @@
     #endif
 
 #else       /*LV_MEM_CUSTOM*/
-    #define LV_MEM_CUSTOM_INCLUDE malloc.h   /* 动态内存函数的头 */
+    #define LV_MEM_CUSTOM_INCLUDE "malloc.h"   /* 动态内存函数的头 */
     #define LV_MEM_CUSTOM_ALLOC   lv_mymalloc
     #define LV_MEM_CUSTOM_FREE    lv_myfree
     #define LV_MEM_CUSTOM_REALLOC lv_myrealloc
@@ -89,10 +89,10 @@
  ***********************************************************************************/
  
 /* 默认的显示刷新周期。LVGL使用这个周期重绘修改过的区域 */
-#define LV_DISP_DEF_REFR_PERIOD             5      /*[ms]*/
+#define LV_DISP_DEF_REFR_PERIOD             30      /*[ms]*/
 
 /* 输入设备的读取周期(以毫秒为单位) */
-#define LV_INDEV_DEF_READ_PERIOD            5     /*[ms]*/
+#define LV_INDEV_DEF_READ_PERIOD            30     /*[ms]*/
 
 /* 使用自定义tick源，以毫秒为单位告诉运行时间。它不需要手动更新 `lv_tick_inc()` */
 #define LV_TICK_CUSTOM                      1

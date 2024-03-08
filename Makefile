@@ -205,13 +205,13 @@ $(BUILD_DIR)/$(TARGET).elf: $(OBJECTS) Makefile
 	@$(CC) $(OBJECTS) $(LDFLAGS) -o $@
 
 $(BUILD_DIR)/%.hex: $(BUILD_DIR)/%.elf | $(BUILD_DIR)
-	@echo 'HEX $<'
+	@echo 'HEX $@'
 	@$(HEX) $< $@
 	
 $(BUILD_DIR)/%.bin: $(BUILD_DIR)/%.elf | $(BUILD_DIR)
-	@echo 'BIN $<'
+	@echo 'BIN $@'
 	@$(BIN) $< $@	
-	@echo 'Size $<'
+	@echo 'SZ  $<'
 	@$(SZ) $<
 
 #######################################

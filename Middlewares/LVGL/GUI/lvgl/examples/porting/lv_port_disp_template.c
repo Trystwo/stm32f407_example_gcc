@@ -17,13 +17,13 @@
 /*********************
  *      DEFINES
  *********************/
-#define USE_SRAM        0      /* 使用外部sram为1，否则为0 */
+#define USE_SRAM        1      /* 使用外部sram为1，否则为0 */
 #ifdef USE_SRAM
 #include "malloc.h"
 #endif
 
-#define MY_DISP_HOR_RES (320)   /* 屏幕宽度 */
-#define MY_DISP_VER_RES (240)   /* 屏幕高度 */
+#define MY_DISP_HOR_RES (240)   /* 屏幕宽度 */
+#define MY_DISP_VER_RES (320)   /* 屏幕高度 */
 
 /**********************
  *      TYPEDEFS
@@ -112,11 +112,12 @@ void lv_port_disp_init(void)
     /* 单缓冲区示例) */
     static lv_disp_draw_buf_t draw_buf_dsc_1;
 #if USE_SRAM
-    static lv_color_t buf_1 = mymalloc(SRAMEX, MY_DISP_HOR_RES * MY_DISP_VER_RES);              /* 设置缓冲区的大小为屏幕的全尺寸大小 */
+    static lv_color_t *buf_1;
+    buf_1 =  (lv_color_t *)mymalloc(SRAMEX, MY_DISP_HOR_RES * MY_DISP_VER_RES);              /* 设置缓冲区的大小为屏幕的全尺寸大小 */
     lv_disp_draw_buf_init(&draw_buf_dsc_1, buf_1, NULL, MY_DISP_HOR_RES * MY_DISP_VER_RES);     /* 初始化显示缓冲区 */
 #else
-    static lv_color_t buf_1[MY_DISP_HOR_RES * 240] __attribute__((section(".sram_data")));                                              /* 设置缓冲区的大小为 10 行屏幕的大小 */
-    lv_disp_draw_buf_init(&draw_buf_dsc_1, buf_1, NULL, MY_DISP_HOR_RES * 240);                  /* 初始化显示缓冲区 */
+    static lv_color_t buf_1[MY_DISP_HOR_RES * MY_DISP_VER_RES] __attribute__((section(".sram_data")));                                              /* 设置缓冲区的大小为 10 行屏幕的大小 */
+    lv_disp_draw_buf_init(&draw_buf_dsc_1, buf_1, NULL, MY_DISP_HOR_RES * MY_DISP_VER_RES);                  /* 初始化显示缓冲区 */
 #endif
 
     /* 双缓冲区示例) */

@@ -72,7 +72,7 @@ uint8_t sys_stm32_clock_init(uint32_t plln, uint32_t pllm, uint32_t pllp, uint32
   * @retval int
   */
 
-uint8_t str[1] __attribute__((section(".sram_data" )));
+//uint8_t str[1] __attribute__((section(".sram_data" )));
 
 int main(void)
 {
@@ -108,7 +108,7 @@ int main(void)
   /* Initialize all configured peripherals */
 
   /* USER CODE BEGIN 2 */
-  str[0] = 0x55;
+ 
   lvgl_demo();                        /* 运行FreeRTOS例程 */
   /* USER CODE END 2 */
 
